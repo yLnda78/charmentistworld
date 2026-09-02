@@ -1,71 +1,134 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Checkout — CHARMENTIST</title>
+
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
+
 <body data-page="checkout.html">
+
 
 <div id="site-header" data-variant="light"></div>
 
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
 <section
   class="hero"
-  style="min-height:30vh; background:none; color:var(--text); display:flex; align-items:center;"
+  style="
+    min-height:30vh;
+    background:none;
+    color:var(--text);
+    display:flex;
+    align-items:center;
+  "
 >
-  <div class="hero-inner" style="color:var(--text); width:100%;">
+
+  <div
+    class="hero-inner"
+    style="
+      color:var(--text);
+      width:100%;
+    "
+  >
+
     <div class="hero-left">
-      <span class="hero-vertical" style="opacity:.5;">Your Order</span>
+
+      <span
+        class="hero-vertical"
+        style="opacity:.5;"
+      >
+        Your Order
+      </span>
+
 
       <div>
+
         <h1
           class="hero-title"
-          style="font-size:2.4rem; margin-bottom:12px;"
+          style="
+            font-size:2.4rem;
+            margin-bottom:12px;
+          "
         >
           CHECKOUT
         </h1>
 
+
         <p
           class="hero-sub"
-          style="color:var(--muted); max-width:440px;"
+          style="
+            color:var(--muted);
+            max-width:440px;
+          "
         >
           Every detail matters. Your journey to owning a masterpiece begins here.
         </p>
+
       </div>
+
     </div>
+
   </div>
+
 </section>
+
 
 
 <!-- =========================================================
      CHECKOUT STEPS
 ========================================================= -->
 
-<div class="steps small" id="checkout-steps">
+<div
+  class="steps small"
+  id="checkout-steps"
+>
 
-  <div class="step active" data-step-tab="1">
+  <div
+    class="step active"
+    data-step-tab="1"
+  >
     <span class="dot">1</span>
     Information
   </div>
 
-  <div class="step" data-step-tab="2">
+
+  <div
+    class="step"
+    data-step-tab="2"
+  >
     <span class="dot">2</span>
     Shipping
   </div>
 
-  <div class="step" data-step-tab="3">
+
+  <div
+    class="step"
+    data-step-tab="3"
+  >
     <span class="dot">3</span>
     Payment
   </div>
 
-  <div class="step" data-step-tab="4">
+
+  <div
+    class="step"
+    data-step-tab="4"
+  >
     <span class="dot">4</span>
     Review
   </div>
 
 </div>
+
 
 
 <!-- =========================================================
@@ -74,40 +137,60 @@
 
 <section
   class="section-pad"
+  id="checkout-filled"
   style="
     padding-top:0;
     display:grid;
     grid-template-columns:1.6fr 1fr;
     gap:50px;
   "
-  id="checkout-filled"
 >
 
-<form id="checkout-form" novalidate>
+
+<form
+  id="checkout-form"
+  novalidate
+>
 
 
 <!-- =========================================================
-     STEP 1 — CUSTOMER
+     STEP 1
 ========================================================= -->
 
-<div class="checkout-panel" data-step="1">
+<div
+  class="checkout-panel"
+  data-step="1"
+>
 
   <div
     class="eyebrow"
-    style="display:flex; justify-content:space-between; gap:20px;"
+    style="
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+    "
   >
-    <span>1. Customer Information</span>
 
     <span>
+      1. Customer Information
+    </span>
+
+
+    <span>
+
       Returning customer?
+
       <a
         href="signin.html"
         style="text-decoration:underline;"
       >
         Log in
       </a>
+
     </span>
+
   </div>
+
 
 
   <div class="field">
@@ -121,9 +204,11 @@
       id="f-email"
       autocomplete="email"
       required
+      placeholder="you@example.com"
     >
 
   </div>
+
 
 
   <div class="field-row">
@@ -138,6 +223,7 @@
         id="f-first"
         autocomplete="given-name"
         required
+        placeholder="First name"
       >
 
     </div>
@@ -153,11 +239,13 @@
         id="f-last"
         autocomplete="family-name"
         required
+        placeholder="Last name"
       >
 
     </div>
 
   </div>
+
 
 
   <div class="field">
@@ -177,10 +265,14 @@
   </div>
 
 
+
   <button
     type="button"
     class="btn btn-dark mt-40"
-    style="width:100%; justify-content:center;"
+    style="
+      width:100%;
+      justify-content:center;
+    "
     data-next="2"
   >
     Continue to Shipping →
@@ -191,7 +283,7 @@
 
 
 <!-- =========================================================
-     STEP 2 — SHIPPING
+     STEP 2
 ========================================================= -->
 
 <div
@@ -205,11 +297,13 @@
   </div>
 
 
+
   <div class="field">
 
     <label for="f-country">
       Country / Region
     </label>
+
 
     <select id="f-country">
 
@@ -219,7 +313,13 @@
       <option>France</option>
       <option>Germany</option>
       <option>Hong Kong</option>
-      <option selected>Indonesia</option>
+
+      <option
+        selected
+      >
+        Indonesia
+      </option>
+
       <option>Italy</option>
       <option>Japan</option>
       <option>Netherlands</option>
@@ -240,13 +340,18 @@
   </div>
 
 
+
   <div
     id="currency-status"
     class="small"
-    style="margin:-8px 0 20px; opacity:.65;"
+    style="
+      margin:-8px 0 20px;
+      opacity:.65;
+    "
   >
     Loading current exchange rate…
   </div>
+
 
 
   <div class="field">
@@ -259,9 +364,11 @@
       id="f-address"
       autocomplete="street-address"
       required
+      placeholder="Street address"
     >
 
   </div>
+
 
 
   <div class="field-row">
@@ -276,6 +383,7 @@
         id="f-city"
         autocomplete="address-level2"
         required
+        placeholder="City"
       >
 
     </div>
@@ -283,7 +391,10 @@
 
     <div class="field">
 
-      <label id="f-province-label" for="f-province">
+      <label
+        id="f-province-label"
+        for="f-province"
+      >
         Province
       </label>
 
@@ -291,11 +402,13 @@
         id="f-province"
         autocomplete="address-level1"
         required
+        placeholder="Province"
       >
 
     </div>
 
   </div>
+
 
 
   <div class="field">
@@ -307,9 +420,11 @@
     <input
       id="f-postal"
       autocomplete="postal-code"
+      placeholder="12345"
     >
 
   </div>
+
 
 
   <div class="eyebrow mt-40">
@@ -320,12 +435,21 @@
   <div id="delivery-options-list"></div>
 
 
-  <div style="display:flex; gap:16px;">
+
+  <div
+    style="
+      display:flex;
+      gap:16px;
+    "
+  >
 
     <button
       type="button"
       class="btn btn-outline mt-40"
-      style="flex:1; justify-content:center;"
+      style="
+        flex:1;
+        justify-content:center;
+      "
       data-back="1"
     >
       ← Back
@@ -335,7 +459,10 @@
     <button
       type="button"
       class="btn btn-dark mt-40"
-      style="flex:1; justify-content:center;"
+      style="
+        flex:1;
+        justify-content:center;
+      "
       data-next="3"
     >
       Continue to Payment →
@@ -348,7 +475,7 @@
 
 
 <!-- =========================================================
-     STEP 3 — PAYMENT
+     STEP 3
 ========================================================= -->
 
 <div
@@ -366,22 +493,29 @@
     class="small"
     style="margin-bottom:20px;"
   >
-    Your payment is processed securely. Card and supported digital payment
-    methods are handled through our payment provider. For bank transfer,
-    wire transfer, invoice, or other assisted payment methods, our team
-    will provide the appropriate payment instructions.
+    Your payment is not taken on this page. Select your preferred
+    payment method and continue to review your order.
   </p>
 
 
   <div id="payment-options-list"></div>
 
 
-  <div style="display:flex; gap:16px;">
+
+  <div
+    style="
+      display:flex;
+      gap:16px;
+    "
+  >
 
     <button
       type="button"
       class="btn btn-outline mt-40"
-      style="flex:1; justify-content:center;"
+      style="
+        flex:1;
+        justify-content:center;
+      "
       data-back="2"
     >
       ← Back
@@ -391,7 +525,10 @@
     <button
       type="button"
       class="btn btn-dark mt-40"
-      style="flex:1; justify-content:center;"
+      style="
+        flex:1;
+        justify-content:center;
+      "
       data-next="4"
     >
       Review Order →
@@ -404,7 +541,7 @@
 
 
 <!-- =========================================================
-     STEP 4 — REVIEW
+     STEP 4
 ========================================================= -->
 
 <div
@@ -433,17 +570,24 @@
     style="margin-bottom:20px;"
   >
     By placing this order, you confirm that the information above is correct.
-    Your order will be submitted to our Maison for confirmation and payment
-    processing.
   </p>
 
 
-  <div style="display:flex; gap:16px;">
+
+  <div
+    style="
+      display:flex;
+      gap:16px;
+    "
+  >
 
     <button
       type="button"
       class="btn btn-outline mt-0"
-      style="flex:1; justify-content:center;"
+      style="
+        flex:1;
+        justify-content:center;
+      "
       data-back="3"
     >
       ← Back
@@ -453,7 +597,10 @@
     <button
       type="button"
       class="btn btn-dark mt-0"
-      style="flex:1; justify-content:center;"
+      style="
+        flex:1;
+        justify-content:center;
+      "
       id="confirm-order-btn"
     >
       Place Order →
@@ -462,6 +609,7 @@
   </div>
 
 </div>
+
 
 </form>
 
@@ -475,7 +623,10 @@
 
   <div
     class="eyebrow"
-    style="display:flex; justify-content:space-between;"
+    style="
+      display:flex;
+      justify-content:space-between;
+    "
   >
 
     <span>
@@ -526,14 +677,20 @@
 
       Your order reference is
       <strong id="checkout-order-number"></strong>.
-      We've opened WhatsApp with your order details ready to send —
-      if it didn't open automatically, tap the button below.
-      A member of our team will confirm payment and delivery with
-      you directly in the chat.
 
+      We've opened WhatsApp with your order details ready to send.
     </p>
 
-    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:8px;">
+
+    <div
+      style="
+        display:flex;
+        gap:12px;
+        justify-content:center;
+        flex-wrap:wrap;
+        margin-top:8px;
+      "
+    >
 
       <a
         class="btn btn-dark"
@@ -544,6 +701,7 @@
       >
         Continue on WhatsApp →
       </a>
+
 
       <a
         class="btn btn-outline"
@@ -560,48 +718,12 @@
 
 
 
-<!-- =========================================================
-     EMPTY CART
-========================================================= -->
-
-<section
-  class="section-pad wrap"
-  id="checkout-empty"
-  style="display:none;"
->
-
-  <div class="empty-state">
-
-    <h3>
-      Your bag is empty
-    </h3>
-
-
-    <p>
-      Add a piece to your bag before checking out —
-      everything you save will appear here.
-    </p>
-
-
-    <a
-      class="btn btn-dark"
-      href="index.html#collections"
-    >
-      Browse Collections
-    </a>
-
-  </div>
-
-</section>
-
-
-
 <div id="site-footer"></div>
 
 
 
 <!-- =========================================================
-     EXISTING SITE JS
+     SITE JS
 ========================================================= -->
 
 <script src="assets/js/config.js"></script>
@@ -615,26 +737,38 @@
 <script>
 
 /* ============================================================
-   CHARMENTIST CHECKOUT
+   CHECKOUT TEST MODE
 ============================================================ */
 
-const CHARM_API_BASE =
+/*
+  TEMPORARY TEST MODE
+
+  This allows checkout to work even when the real cart is empty.
+
+  IMPORTANT:
+  Set this to false when real cart testing is ready.
+*/
+
+const CHECKOUT_PLACEHOLDER_MODE = true;
+
+
+
+/* ============================================================
+   API
+============================================================ */
+
+const API_BASE =
   window.CHARM_API_BASE ||
   'http://localhost:4000/api';
+
 
 
 /* ============================================================
    TAX
 ============================================================ */
 
-/*
-  Currently no tax is added by the frontend.
-
-  IMPORTANT:
-  Backend must calculate any legally applicable tax itself.
-*/
-
 const TAX_RATE = 0;
+
 
 
 /* ============================================================
@@ -643,41 +777,27 @@ const TAX_RATE = 0;
 
 const CURRENCY_INFO = {
 
-  AUD: { symbol:'A$', decimals:2 },
-  CAD: { symbol:'C$', decimals:2 },
-  DKK: { symbol:'kr', decimals:2 },
-
-  EUR: { symbol:'€', decimals:2 },
-
-  HKD: { symbol:'HK$', decimals:2 },
-
-  IDR: { symbol:'Rp', decimals:0 },
-
-  JPY: { symbol:'¥', decimals:0 },
-
-  NZD: { symbol:'NZ$', decimals:2 },
-
-  NOK: { symbol:'kr', decimals:2 },
-
-  QAR: { symbol:'QR', decimals:2 },
-
-  SAR: { symbol:'SR', decimals:2 },
-
-  SGD: { symbol:'S$', decimals:2 },
-
-  KRW: { symbol:'₩', decimals:0 },
-
-  SEK: { symbol:'kr', decimals:2 },
-
-  CHF: { symbol:'CHF', decimals:2 },
-
-  AED: { symbol:'AED', decimals:2 },
-
-  GBP: { symbol:'£', decimals:2 },
-
-  USD: { symbol:'$', decimals:2 }
+  AUD:{symbol:'A$',decimals:2},
+  CAD:{symbol:'C$',decimals:2},
+  DKK:{symbol:'kr',decimals:2},
+  EUR:{symbol:'€',decimals:2},
+  HKD:{symbol:'HK$',decimals:2},
+  IDR:{symbol:'Rp',decimals:0},
+  JPY:{symbol:'¥',decimals:0},
+  NZD:{symbol:'NZ$',decimals:2},
+  NOK:{symbol:'kr',decimals:2},
+  QAR:{symbol:'QR',decimals:2},
+  SAR:{symbol:'SR',decimals:2},
+  SGD:{symbol:'S$',decimals:2},
+  KRW:{symbol:'₩',decimals:0},
+  SEK:{symbol:'kr',decimals:2},
+  CHF:{symbol:'CHF',decimals:2},
+  AED:{symbol:'AED',decimals:2},
+  GBP:{symbol:'£',decimals:2},
+  USD:{symbol:'$',decimals:2}
 
 };
+
 
 
 /* ============================================================
@@ -689,56 +809,43 @@ const COUNTRY_CURRENCIES = {
   Australia:'AUD',
   Canada:'CAD',
   Denmark:'DKK',
-
   France:'EUR',
   Germany:'EUR',
   Italy:'EUR',
   Netherlands:'EUR',
-
   'Hong Kong':'HKD',
-
   Indonesia:'IDR',
-
   Japan:'JPY',
-
   'New Zealand':'NZD',
   Norway:'NOK',
-
   Qatar:'QAR',
   'Saudi Arabia':'SAR',
-
   Singapore:'SGD',
   'South Korea':'KRW',
-
   Sweden:'SEK',
   Switzerland:'CHF',
-
   'United Arab Emirates':'AED',
-
   'United Kingdom':'GBP',
-
   'United States':'USD'
 
 };
 
 
-/* ============================================================
-   WHATSAPP CHECKOUT
-   ---------------------------------------------------------
-   Every order on this site is finalised over WhatsApp instead
-   of a payment gateway. WA_PHONE is CHARMENTIST's business
-   number (international format, no "+", no spaces).
 
-   LANGUAGE_BY_COUNTRY maps each country in the dropdown above
-   to the language its WhatsApp order message is written in —
-   change the country, and the message that goes to WhatsApp
-   automatically switches language too. Any country not listed
-   falls back to English.
+/* ============================================================
+   WHATSAPP
 ============================================================ */
 
 const WA_PHONE = '6282379983844';
 
+
+
+/* ============================================================
+   LANGUAGE
+============================================================ */
+
 const LANGUAGE_BY_COUNTRY = {
+
   Australia:'en',
   Canada:'en',
   Denmark:'da',
@@ -760,141 +867,124 @@ const LANGUAGE_BY_COUNTRY = {
   'United Arab Emirates':'ar',
   'United Kingdom':'en',
   'United States':'en'
+
 };
+
+
 
 const WA_I18N = {
-  en: {
-    greeting:'Hello CHARMENTIST 👋', intro:'I would like to place the following order:',
-    items_header:'ITEMS', summary_header:'ORDER SUMMARY', subtotal:'Subtotal', shipping:'Shipping',
-    tax:'Tax', total:'Total', complimentary:'Complimentary', delivery_header:'DELIVERY & PAYMENT',
-    delivery_method:'Delivery method', payment_method:'Preferred payment', shipping_header:'SHIPPING DETAILS',
-    order_ref:'Order reference', qty:'Qty', size:'Size',
+
+  en:{
+    greeting:'Hello CHARMENTIST 👋',
+    intro:'I would like to place the following order:',
+    items_header:'ITEMS',
+    summary_header:'ORDER SUMMARY',
+    subtotal:'Subtotal',
+    shipping:'Shipping',
+    tax:'Tax',
+    total:'Total',
+    complimentary:'Complimentary',
+    delivery_header:'DELIVERY & PAYMENT',
+    delivery_method:'Delivery method',
+    payment_method:'Preferred payment',
+    shipping_header:'SHIPPING DETAILS',
+    order_ref:'Order reference',
+    qty:'Qty',
+    size:'Size',
     closing:'Could you please confirm this order and the next steps? Thank you.'
   },
-  id: {
-    greeting:'Halo CHARMENTIST 👋', intro:'Saya ingin melakukan pemesanan berikut:',
-    items_header:'DAFTAR PRODUK', summary_header:'RINGKASAN PESANAN', subtotal:'Subtotal', shipping:'Ongkos Kirim',
-    tax:'Pajak', total:'Total', complimentary:'Gratis', delivery_header:'PENGIRIMAN & PEMBAYARAN',
-    delivery_method:'Metode pengiriman', payment_method:'Metode pembayaran', shipping_header:'DETAIL PENGIRIMAN',
-    order_ref:'Nomor referensi pesanan', qty:'Jumlah', size:'Ukuran',
+
+  id:{
+    greeting:'Halo CHARMENTIST 👋',
+    intro:'Saya ingin melakukan pemesanan berikut:',
+    items_header:'DAFTAR PRODUK',
+    summary_header:'RINGKASAN PESANAN',
+    subtotal:'Subtotal',
+    shipping:'Ongkos Kirim',
+    tax:'Pajak',
+    total:'Total',
+    complimentary:'Gratis',
+    delivery_header:'PENGIRIMAN & PEMBAYARAN',
+    delivery_method:'Metode pengiriman',
+    payment_method:'Metode pembayaran',
+    shipping_header:'DETAIL PENGIRIMAN',
+    order_ref:'Nomor referensi pesanan',
+    qty:'Jumlah',
+    size:'Ukuran',
     closing:'Mohon konfirmasinya untuk pesanan ini beserta langkah selanjutnya. Terima kasih.'
   },
-  da: {
-    greeting:'Hej CHARMENTIST 👋', intro:'Jeg vil gerne afgive følgende bestilling:',
-    items_header:'VARER', summary_header:'ORDREOVERSIGT', subtotal:'Subtotal', shipping:'Fragt',
-    tax:'Moms', total:'Total', complimentary:'Gratis', delivery_header:'LEVERING & BETALING',
-    delivery_method:'Leveringsmetode', payment_method:'Foretrukken betaling', shipping_header:'LEVERINGSOPLYSNINGER',
-    order_ref:'Ordrenummer', qty:'Antal', size:'Størrelse',
-    closing:'Kan I bekræfte denne ordre og de næste trin? Mange tak.'
-  },
-  fr: {
-    greeting:'Bonjour CHARMENTIST 👋', intro:'Je souhaite passer la commande suivante :',
-    items_header:'ARTICLES', summary_header:'RÉCAPITULATIF DE LA COMMANDE', subtotal:'Sous-total', shipping:'Livraison',
-    tax:'Taxe', total:'Total', complimentary:'Offerte', delivery_header:'LIVRAISON & PAIEMENT',
-    delivery_method:'Mode de livraison', payment_method:'Moyen de paiement préféré', shipping_header:'COORDONNÉES DE LIVRAISON',
-    order_ref:'Référence de commande', qty:'Qté', size:'Taille',
+
+  fr:{
+    greeting:'Bonjour CHARMENTIST 👋',
+    intro:'Je souhaite passer la commande suivante :',
+    items_header:'ARTICLES',
+    summary_header:'RÉCAPITULATIF DE LA COMMANDE',
+    subtotal:'Sous-total',
+    shipping:'Livraison',
+    tax:'Taxe',
+    total:'Total',
+    complimentary:'Offerte',
+    delivery_header:'LIVRAISON & PAIEMENT',
+    delivery_method:'Mode de livraison',
+    payment_method:'Moyen de paiement préféré',
+    shipping_header:'COORDONNÉES DE LIVRAISON',
+    order_ref:'Référence de commande',
+    qty:'Qté',
+    size:'Taille',
     closing:'Pourriez-vous confirmer cette commande et les prochaines étapes ? Merci beaucoup.'
   },
-  de: {
-    greeting:'Hallo CHARMENTIST 👋', intro:'Ich möchte gerne folgende Bestellung aufgeben:',
-    items_header:'ARTIKEL', summary_header:'BESTELLÜBERSICHT', subtotal:'Zwischensumme', shipping:'Versand',
-    tax:'Steuer', total:'Gesamt', complimentary:'Kostenlos', delivery_header:'LIEFERUNG & ZAHLUNG',
-    delivery_method:'Versandart', payment_method:'Bevorzugte Zahlungsmethode', shipping_header:'LIEFERADRESSE',
-    order_ref:'Bestellreferenz', qty:'Menge', size:'Größe',
+
+  de:{
+    greeting:'Hallo CHARMENTIST 👋',
+    intro:'Ich möchte gerne folgende Bestellung aufgeben:',
+    items_header:'ARTIKEL',
+    summary_header:'BESTELLÜBERSICHT',
+    subtotal:'Zwischensumme',
+    shipping:'Versand',
+    tax:'Steuer',
+    total:'Gesamt',
+    complimentary:'Kostenlos',
+    delivery_header:'LIEFERUNG & ZAHLUNG',
+    delivery_method:'Versandart',
+    payment_method:'Bevorzugte Zahlungsmethode',
+    shipping_header:'LIEFERADRESSE',
+    order_ref:'Bestellreferenz',
+    qty:'Menge',
+    size:'Größe',
     closing:'Könnten Sie diese Bestellung und die nächsten Schritte bestätigen? Vielen Dank.'
-  },
-  it: {
-    greeting:'Ciao CHARMENTIST 👋', intro:'Vorrei effettuare il seguente ordine:',
-    items_header:'ARTICOLI', summary_header:'RIEPILOGO ORDINE', subtotal:'Subtotale', shipping:'Spedizione',
-    tax:'Imposta', total:'Totale', complimentary:'Gratuita', delivery_header:'CONSEGNA E PAGAMENTO',
-    delivery_method:'Metodo di consegna', payment_method:'Metodo di pagamento preferito', shipping_header:'DETTAGLI DI SPEDIZIONE',
-    order_ref:'Riferimento ordine', qty:'Quantità', size:'Taglia',
-    closing:'Potreste confermare questo ordine e i prossimi passi? Grazie mille.'
-  },
-  nl: {
-    greeting:'Hallo CHARMENTIST 👋', intro:'Ik wil graag de volgende bestelling plaatsen:',
-    items_header:'ARTIKELEN', summary_header:'BESTELOVERZICHT', subtotal:'Subtotaal', shipping:'Verzendkosten',
-    tax:'Belasting', total:'Totaal', complimentary:'Gratis', delivery_header:'LEVERING & BETALING',
-    delivery_method:'Verzendmethode', payment_method:'Gewenste betaalmethode', shipping_header:'VERZENDGEGEVENS',
-    order_ref:'Bestelreferentie', qty:'Aantal', size:'Maat',
-    closing:'Kunt u deze bestelling en de volgende stappen bevestigen? Hartelijk dank.'
-  },
-  ja: {
-    greeting:'CHARMENTIST 様、こんにちは 👋', intro:'以下の内容で注文をお願いしたいです:',
-    items_header:'商品', summary_header:'ご注文内容', subtotal:'小計', shipping:'配送料',
-    tax:'税', total:'合計', complimentary:'無料', delivery_header:'配送・お支払い',
-    delivery_method:'配送方法', payment_method:'希望のお支払い方法', shipping_header:'配送先情報',
-    order_ref:'注文番号', qty:'数量', size:'サイズ',
-    closing:'こちらの注文内容と今後の流れについてご確認いただけますでしょうか。よろしくお願いいたします。'
-  },
-  no: {
-    greeting:'Hei CHARMENTIST 👋', intro:'Jeg ønsker å legge inn følgende bestilling:',
-    items_header:'VARER', summary_header:'ORDREOVERSIKT', subtotal:'Delsum', shipping:'Frakt',
-    tax:'Avgift', total:'Totalt', complimentary:'Gratis', delivery_header:'LEVERING & BETALING',
-    delivery_method:'Leveringsmetode', payment_method:'Foretrukket betalingsmåte', shipping_header:'LEVERINGSDETALJER',
-    order_ref:'Ordrereferanse', qty:'Antall', size:'Størrelse',
-    closing:'Kan dere bekrefte denne bestillingen og neste steg? Tusen takk.'
-  },
-  ar: {
-    greeting:'مرحبًا CHARMENTIST 👋', intro:'أرغب في تقديم الطلب التالي:',
-    items_header:'المنتجات', summary_header:'ملخص الطلب', subtotal:'الإجمالي الفرعي', shipping:'الشحن',
-    tax:'الضريبة', total:'الإجمالي', complimentary:'مجاني', delivery_header:'التوصيل والدفع',
-    delivery_method:'طريقة التوصيل', payment_method:'طريقة الدفع المفضلة', shipping_header:'تفاصيل الشحن',
-    order_ref:'رقم الطلب', qty:'الكمية', size:'المقاس',
-    closing:'هل يمكنكم تأكيد هذا الطلب والخطوات التالية؟ شكرًا جزيلاً.'
-  },
-  ko: {
-    greeting:'안녕하세요 CHARMENTIST 👋', intro:'다음과 같이 주문을 진행하고 싶습니다:',
-    items_header:'상품', summary_header:'주문 요약', subtotal:'소계', shipping:'배송비',
-    tax:'세금', total:'총액', complimentary:'무료', delivery_header:'배송 및 결제',
-    delivery_method:'배송 방법', payment_method:'희망 결제 방법', shipping_header:'배송 정보',
-    order_ref:'주문 번호', qty:'수량', size:'사이즈',
-    closing:'이 주문 내용과 다음 절차를 확인해 주실 수 있을까요? 감사합니다.'
-  },
-  sv: {
-    greeting:'Hej CHARMENTIST 👋', intro:'Jag vill gärna lägga följande beställning:',
-    items_header:'VAROR', summary_header:'ORDERÖVERSIKT', subtotal:'Delsumma', shipping:'Frakt',
-    tax:'Skatt', total:'Totalt', complimentary:'Gratis', delivery_header:'LEVERANS & BETALNING',
-    delivery_method:'Leveransmetod', payment_method:'Önskad betalmetod', shipping_header:'LEVERANSUPPGIFTER',
-    order_ref:'Ordernummer', qty:'Antal', size:'Storlek',
-    closing:'Kan ni bekräfta denna beställning och nästa steg? Tack så mycket.'
-  },
-  zh: {
-    greeting:'您好 CHARMENTIST 👋', intro:'我想下以下訂單：',
-    items_header:'商品', summary_header:'訂單摘要', subtotal:'小計', shipping:'運費',
-    tax:'稅金', total:'總計', complimentary:'免費', delivery_header:'配送與付款',
-    delivery_method:'配送方式', payment_method:'偏好的付款方式', shipping_header:'收件資訊',
-    order_ref:'訂單編號', qty:'數量', size:'尺寸',
-    closing:'可以請您確認這筆訂單及後續流程嗎？謝謝。'
   }
+
 };
 
-function currentLanguageCode(){
-  const country =
-    document.getElementById('f-country')?.value ||
-    'Indonesia';
-  return LANGUAGE_BY_COUNTRY[country] || 'en';
-}
 
 
 /* ============================================================
-   FX STATE
+   LANGUAGE
+============================================================ */
+
+function currentLanguageCode(){
+
+  const country =
+    document.getElementById('f-country')?.value ||
+    'Indonesia';
+
+  return LANGUAGE_BY_COUNTRY[country] || 'en';
+
+}
+
+
+
+/* ============================================================
+   CURRENCY
 ============================================================ */
 
 let FX_RATES = {
   USD:1
 };
 
-let FX_DATE = null;
-
-let FX_LOADING = false;
-
 let FX_AVAILABLE = false;
 
 
-/* ============================================================
-   CURRENT CURRENCY
-============================================================ */
 
 function currentCurrencyCode(){
 
@@ -907,8 +997,28 @@ function currentCurrencyCode(){
 }
 
 
+
 /* ============================================================
-   FETCH FX
+   CURRENCY STATUS
+============================================================ */
+
+function updateCurrencyStatus(text){
+
+  const el =
+    document.getElementById(
+      'currency-status'
+    );
+
+  if(el){
+    el.textContent = text;
+  }
+
+}
+
+
+
+/* ============================================================
+   FX
 ============================================================ */
 
 async function fetchExchangeRate(currency){
@@ -916,8 +1026,6 @@ async function fetchExchangeRate(currency){
   if(currency === 'USD'){
 
     FX_RATES.USD = 1;
-
-    FX_DATE = null;
 
     FX_AVAILABLE = true;
 
@@ -932,10 +1040,6 @@ async function fetchExchangeRate(currency){
 
   try{
 
-    FX_LOADING = true;
-
-    FX_AVAILABLE = false;
-
     updateCurrencyStatus(
       `Updating ${currency} exchange rate…`
     );
@@ -945,18 +1049,13 @@ async function fetchExchangeRate(currency){
       await fetch(
         `https://api.frankfurter.dev/v2/rate/USD/${currency}`,
         {
-          method:'GET',
           cache:'no-store'
         }
       );
 
 
     if(!response.ok){
-
-      throw new Error(
-        `FX API returned ${response.status}`
-      );
-
+      throw new Error('FX request failed');
     }
 
 
@@ -966,32 +1065,20 @@ async function fetchExchangeRate(currency){
 
     if(
       !data ||
-      typeof data.rate !== 'number' ||
-      data.rate <= 0
+      typeof data.rate !== 'number'
     ){
-
-      throw new Error(
-        'Invalid exchange-rate response.'
-      );
-
+      throw new Error('Invalid FX response');
     }
 
 
     FX_RATES[currency] =
       data.rate;
 
-    FX_DATE =
-      data.date || null;
-
     FX_AVAILABLE = true;
 
 
     updateCurrencyStatus(
-      `Currency: ${currency} · Live reference rate${
-        FX_DATE
-          ? ` · ${FX_DATE}`
-          : ''
-      }`
+      `Currency: ${currency} · Live reference rate`
     );
 
 
@@ -999,34 +1086,23 @@ async function fetchExchangeRate(currency){
 
   }catch(error){
 
-    console.error(
-      'Could not fetch exchange rate:',
-      error
-    );
-
+    console.error(error);
 
     FX_AVAILABLE = false;
 
 
     updateCurrencyStatus(
-      `Currency: ${currency} · Exchange rate temporarily unavailable`
+      `Currency: ${currency} · Exchange rate unavailable`
     );
 
 
     return null;
-
-  }finally{
-
-    FX_LOADING = false;
 
   }
 
 }
 
 
-/* ============================================================
-   UPDATE EXCHANGE RATE
-============================================================ */
 
 async function updateExchangeRate(){
 
@@ -1034,65 +1110,10 @@ async function updateExchangeRate(){
     currentCurrencyCode();
 
 
-  const rate =
-    await fetchExchangeRate(currency);
-
-
-  if(rate === null){
-
-    renderDeliveryOptions();
-    renderOrderPanel();
-
-    return false;
-
-  }
-
-
-  renderDeliveryOptions();
-  renderOrderPanel();
-
-
-  const paymentPanel =
-    document.querySelector(
-      '.checkout-panel[data-step="3"]'
-    );
-
-
-  if(
-    paymentPanel &&
-    paymentPanel.style.display !== 'none'
-  ){
-
-    renderPaymentOptions();
-
-  }
-
-
-  return true;
+  return fetchExchangeRate(currency);
 
 }
 
-
-/* ============================================================
-   CURRENCY STATUS
-============================================================ */
-
-function updateCurrencyStatus(text){
-
-  const el =
-    document.getElementById(
-      'currency-status'
-    );
-
-
-  if(el){
-
-    el.textContent =
-      text;
-
-  }
-
-}
 
 
 /* ============================================================
@@ -1114,11 +1135,6 @@ function fmt(usdAmount){
     FX_RATES[currency];
 
 
-  /*
-    Never silently convert using 1 when FX
-    is unavailable.
-  */
-
   if(
     typeof rate !== 'number' ||
     !FX_AVAILABLE
@@ -1137,11 +1153,8 @@ function fmt(usdAmount){
     converted.toLocaleString(
       'en-US',
       {
-        minimumFractionDigits:
-          info.decimals,
-
-        maximumFractionDigits:
-          info.decimals
+        minimumFractionDigits:info.decimals,
+        maximumFractionDigits:info.decimals
       }
     );
 
@@ -1151,94 +1164,14 @@ function fmt(usdAmount){
 }
 
 
-/* ============================================================
-   CURRENCY TOAST
-============================================================ */
-
-function showCurrencyToast(country){
-
-  document
-    .querySelectorAll('.currency-toast')
-    .forEach(
-      n => n.remove()
-    );
-
-
-  const toast =
-    document.createElement('div');
-
-
-  toast.className =
-    'currency-toast';
-
-
-  toast.innerHTML = `
-
-    <span>
-      Currency updated for ${country}
-    </span>
-
-    <button
-      type="button"
-      aria-label="Close"
-    >
-      &times;
-    </button>
-
-  `;
-
-
-  document.body.appendChild(
-    toast
-  );
-
-
-  requestAnimationFrame(
-    () =>
-      toast.classList.add(
-        'is-visible'
-      )
-  );
-
-
-  const close = () => {
-
-    toast.classList.remove(
-      'is-visible'
-    );
-
-
-    setTimeout(
-      () => toast.remove(),
-      300
-    );
-
-  };
-
-
-  toast
-    .querySelector('button')
-    .addEventListener(
-      'click',
-      close
-    );
-
-
-  setTimeout(
-    close,
-    3200
-  );
-
-}
-
 
 /* ============================================================
-   SHIPPING
+   DELIVERY
 ============================================================ */
 
 const DELIVERY_OPTIONS = {
 
-  domestic: [
+  domestic:[
 
     {
       id:'domestic-standard',
@@ -1263,8 +1196,7 @@ const DELIVERY_OPTIONS = {
 
   ],
 
-
-  international: [
+  international:[
 
     {
       id:'international-standard',
@@ -1292,10 +1224,79 @@ const DELIVERY_OPTIONS = {
 };
 
 
+
 let selectedDelivery = null;
 
 let selectedPayment = null;
+
 let selectedBank = null;
+
+
+
+/* ============================================================
+   PAYMENT
+============================================================ */
+
+const PAYMENT_OPTIONS = {
+
+  domestic:[
+
+    {
+      id:'card',
+      label:'Credit / Debit Card',
+      sub:'Secure card payment through our payment provider'
+    },
+
+    {
+      id:'bank-transfer-domestic',
+      label:'Bank Transfer',
+      sub:'Virtual Account'
+    },
+
+    {
+      id:'qris',
+      label:'QRIS',
+      sub:'Secure QR payment'
+    },
+
+    {
+      id:'invoice',
+      label:'Pay via Invoice',
+      sub:'Arranged personally with your Client Advisor'
+    }
+
+  ],
+
+  international:[
+
+    {
+      id:'card',
+      label:'Credit / Debit Card',
+      sub:'Secure card payment'
+    },
+
+    {
+      id:'paypal',
+      label:'PayPal',
+      sub:'Payment handled securely through PayPal'
+    },
+
+    {
+      id:'klarna',
+      label:'Klarna',
+      sub:'Buy now, pay later'
+    },
+
+    {
+      id:'alipay-wechatpay',
+      label:'Alipay & WeChatPay',
+      sub:'Payment handled securely'
+    }
+
+  ]
+
+};
+
 
 
 /* ============================================================
@@ -1313,78 +1314,91 @@ function isDomestic(){
 }
 
 
+
 /* ============================================================
-   PAYMENT OPTIONS
+   PLACEHOLDER PRODUCT
 ============================================================ */
 
-const PAYMENT_OPTIONS = {
+function getPlaceholderProduct(){
 
-  domestic: [
+  if(
+    typeof CharmData === 'undefined'
+  ){
 
-    {
-      id:'card',
-      label:'Credit / Debit Card',
-      sub:'Secure card payment through our payment provider',
-      gateway:true
-    },
+    return null;
 
-    {
-      id:'bank-transfer-domestic',
-      label:'Bank Transfer',
-      sub:'Get a Virtual Account number instantly — confirms automatically',
-      gateway:true
-    },
+  }
 
-    {
-      id:'qris',
-      label:'QRIS',
-      sub:'Secure QR payment through our payment provider',
-      gateway:true
-    },
 
-    {
-      id:'invoice',
-      label:'Pay via Invoice',
-      sub:'Arranged personally with your Client Advisor',
-      gateway:false
+  /*
+    Try to find the first available product
+    from CharmData.
+
+    Different product.js structures are supported.
+  */
+
+  if(
+    Array.isArray(
+      CharmData.products
+    ) &&
+    CharmData.products.length
+  ){
+
+    return CharmData.products[0];
+
+  }
+
+
+  if(
+    Array.isArray(
+      CharmData.items
+    ) &&
+    CharmData.items.length
+  ){
+
+    return CharmData.items[0];
+
+  }
+
+
+  if(
+    Array.isArray(
+      CharmData.data
+    ) &&
+    CharmData.data.length
+  ){
+
+    return CharmData.data[0];
+
+  }
+
+
+  /*
+    If CharmData has an object instead of an array,
+    try its values.
+  */
+
+  if(
+    CharmData.products &&
+    typeof CharmData.products === 'object'
+  ){
+
+    const values =
+      Object.values(
+        CharmData.products
+      );
+
+    if(values.length){
+      return values[0];
     }
 
-  ],
+  }
 
 
-  international: [
+  return null;
 
-    {
-      id:'card',
-      label:'Credit / Debit Card',
-      sub:'Secure card payment through our payment provider',
-      gateway:true
-    },
+}
 
-    {
-      id:'paypal',
-      label:'PayPal',
-      sub:'Payment handled securely through PayPal',
-      gateway:false
-    },
-
-    {
-      id:'klarna',
-      label:'Klarna',
-      sub:'Buy now, pay later — handled securely through Klarna',
-      gateway:false
-    },
-
-    {
-      id:'alipay-wechatpay',
-      label:'Alipay & WeChatPay',
-      sub:'Payment handled securely through Alipay or WeChatPay',
-      gateway:false
-    }
-
-  ]
-
-};
 
 
 /* ============================================================
@@ -1392,6 +1406,50 @@ const PAYMENT_OPTIONS = {
 ============================================================ */
 
 function getCartItems(){
+
+  /*
+    ==========================================================
+    TEST PLACEHOLDER MODE
+    ==========================================================
+  */
+
+  if(
+    CHECKOUT_PLACEHOLDER_MODE
+  ){
+
+    const placeholder =
+      getPlaceholderProduct();
+
+
+    if(placeholder){
+
+      return [
+
+        {
+
+          id:
+            placeholder.id,
+
+          qty:1,
+
+          size:null,
+
+          product:placeholder
+
+        }
+
+      ];
+
+    }
+
+  }
+
+
+  /*
+    ==========================================================
+    REAL CART MODE
+    ==========================================================
+  */
 
   if(
     typeof CharmStore === 'undefined' ||
@@ -1405,19 +1463,22 @@ function getCartItems(){
 
   return CharmStore
     .getCart()
-    .map(ci => ({
+    .map(
+      ci => ({
 
-      ...ci,
+        ...ci,
 
-      product:
-        CharmData.byId(ci.id)
+        product:
+          CharmData.byId(ci.id)
 
-    }))
+      })
+    )
     .filter(
       x => x.product
     );
 
 }
+
 
 
 /* ============================================================
@@ -1426,13 +1487,35 @@ function getCartItems(){
 
 function getOrderTotals(){
 
-  const subtotal =
-    CharmStore.cartSubtotal();
+  const items =
+    getCartItems();
+
+
+  let subtotal = 0;
+
+
+  items.forEach(
+    item => {
+
+      if(
+        item.product &&
+        typeof item.product.price === 'number'
+      ){
+
+        subtotal +=
+          item.product.price *
+          item.qty;
+
+      }
+
+    }
+  );
 
 
   const tax =
     Math.round(
-      subtotal * TAX_RATE
+      subtotal *
+      TAX_RATE
     );
 
 
@@ -1460,6 +1543,7 @@ function getOrderTotals(){
 }
 
 
+
 /* ============================================================
    DELIVERY RENDER
 ============================================================ */
@@ -1473,9 +1557,7 @@ function renderDeliveryOptions(){
 
 
   if(!container){
-
     return;
-
   }
 
 
@@ -1513,25 +1595,13 @@ function renderDeliveryOptions(){
 
   container.innerHTML =
 
-    list.map(
-      d => {
-
-        const active =
-          d.id ===
-          selectedDelivery.id;
-
-
-        const price =
-          d.cost === 0
-            ? 'Complimentary'
-            : fmt(d.cost);
-
-
-        return `
+    list
+      .map(
+        d => `
 
           <div
             class="delivery-option panel small${
-              active
+              d.id === selectedDelivery.id
                 ? ' is-active'
                 : ''
             }"
@@ -1553,7 +1623,7 @@ function renderDeliveryOptions(){
               <span>
 
                 ${
-                  active
+                  d.id === selectedDelivery.id
                     ? '●'
                     : '○'
                 }
@@ -1564,7 +1634,13 @@ function renderDeliveryOptions(){
 
 
               <span>
-                ${price}
+
+                ${
+                  d.cost === 0
+                    ? 'Complimentary'
+                    : fmt(d.cost)
+                }
+
               </span>
 
             </div>
@@ -1578,275 +1654,23 @@ function renderDeliveryOptions(){
                 padding-left:14px;
               "
             >
+
               ${d.sub}
+
             </div>
 
           </div>
 
-        `;
-
-      }
-    ).join('');
-
-}
-
-
-/* ============================================================
-   PAYMENT BADGES
-============================================================ */
-
-function cardBadgesHtml(){
-
-  return `
-
-    <div
-      class="card-badges"
-      aria-label="Supported cards"
-    >
-
-      <span class="card-badge card-badge-visa">
-        VISA
-      </span>
-
-      <span class="card-badge card-badge-maestro">
-        Maestro
-      </span>
-
-      <span class="card-badge card-badge-mc">
-        MC
-      </span>
-
-      <span class="card-badge badge-more">
-        +5
-      </span>
-
-    </div>
-
-  `;
+        `
+      )
+      .join('');
 
 }
 
 
-/* ============================================================
-   PAYMENT LOGO (non-card brands shown to the right of a row,
-   same idea as cardBadgesHtml() but for one wallet/BNPL brand)
-============================================================ */
-
-function paymentLogoHtml(id){
-
-  if(id === 'paypal'){
-
-    return `
-      <span class="pay-logo pay-logo-paypal" aria-label="PayPal">
-        <span class="pp-pay">Pay</span><span class="pp-pal">Pal</span>
-      </span>
-    `;
-
-  }
-
-  if(id === 'klarna'){
-
-    return `
-      <span class="pay-logo pay-logo-klarna" aria-label="Klarna">
-        Klarna
-      </span>
-    `;
-
-  }
-
-  if(id === 'alipay-wechatpay'){
-
-    return `
-      <span class="pay-logo-group" aria-label="Alipay and WeChatPay">
-        <span class="pay-logo pay-logo-alipay">Alipay</span>
-        <span class="pay-logo pay-logo-wechat">WeChatPay</span>
-      </span>
-    `;
-
-  }
-
-  if(id === 'qris'){
-
-    return `
-      <span class="pay-logo pay-logo-qris" aria-label="QRIS">
-        QRIS
-      </span>
-    `;
-
-  }
-
-  return '';
-
-}
-
 
 /* ============================================================
-   PAYMENT DETAIL
-============================================================ */
-
-function paymentDetailHtml(id){
-
-  const {
-    total
-  } = getOrderTotals();
-
-
-  const t =
-    WA_I18N[currentLanguageCode()] || WA_I18N.en;
-
-
-  /*
-    No payment gateway runs on this site anymore — every method
-    below is just the shopper telling us how they'd like to pay.
-    We confirm and arrange the actual payment together on
-    WhatsApp once the order is reviewed, so none of these panels
-    collect real card numbers or trigger an automatic charge.
-  */
-
-  const noteHtml = `
-    <p class="small" style="margin:8px 0 0; color:var(--muted);">
-      No payment is taken here — after you review your order, we'll
-      confirm it together on WhatsApp and arrange payment there.
-    </p>
-  `;
-
-  if(id === 'card'){
-
-    return `
-      <div class="panel small card-panel">
-        <strong>Credit / Debit Card</strong>
-        ${noteHtml}
-        <p class="small" style="margin:8px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
-        </p>
-      </div>
-    `;
-
-  }
-
-
-  if(id === 'qris'){
-
-    return `
-      <div class="panel small">
-        <strong>QRIS</strong>
-        ${noteHtml}
-        <p class="small" style="margin:8px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
-        </p>
-      </div>
-    `;
-
-  }
-
-
-  if(id === 'bank-transfer-domestic'){
-
-    const BANKS = [
-      { code:'bca', label:'BCA' },
-      { code:'bni', label:'BNI' },
-      { code:'bri', label:'BRI' },
-      { code:'permata', label:'Permata' }
-    ];
-
-    return `
-      <div class="panel small">
-        <strong>Bank Transfer (Virtual Account)</strong>
-        <p class="small" style="margin:8px 0 10px;">
-          Choose your preferred bank — we'll share the Virtual
-          Account number for this order over WhatsApp.
-        </p>
-        <div id="va-bank-picker" style="display:flex; gap:8px; flex-wrap:wrap;">
-          ${
-            BANKS.map(b => `
-              <button
-                type="button"
-                class="btn btn-outline btn-sm${selectedBank === b.code ? ' is-active' : ''}"
-                data-bank="${b.code}"
-                style="${selectedBank === b.code ? 'background:#111; color:#fff; border-color:#111;' : ''}"
-              >
-                ${b.label}
-              </button>
-            `).join('')
-          }
-        </div>
-        <p class="small" style="margin:10px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
-        </p>
-      </div>
-    `;
-
-  }
-
-
-  if(id === 'klarna'){
-
-    return `
-      <div class="panel small">
-        <strong>Klarna</strong>
-        ${noteHtml}
-        <p class="small" style="margin:8px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
-        </p>
-      </div>
-    `;
-
-  }
-
-
-  if(id === 'alipay-wechatpay'){
-
-    return `
-      <div class="panel small">
-        <strong>Alipay & WeChatPay</strong>
-        ${noteHtml}
-        <p class="small" style="margin:8px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
-        </p>
-      </div>
-    `;
-
-  }
-
-
-  if(id === 'paypal'){
-
-    return `
-      <div class="panel small">
-        <strong>PayPal</strong>
-        ${noteHtml}
-        <p class="small" style="margin:8px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
-        </p>
-      </div>
-    `;
-
-  }
-
-
-  if(id === 'invoice'){
-
-    return `
-      <div class="panel small">
-        <strong>Pay via Invoice</strong>
-        <ol class="pay-steps" style="margin-top:10px;">
-          <li>Review and confirm your order.</li>
-          <li>Continue the conversation on WhatsApp.</li>
-          <li>Your Client Advisor sends secure invoice payment instructions.</li>
-        </ol>
-      </div>
-    `;
-
-  }
-
-
-  return '';
-
-}
-
-
-/* ============================================================
-   PAYMENT OPTIONS RENDER
+   PAYMENT
 ============================================================ */
 
 function renderPaymentOptions(){
@@ -1858,9 +1682,7 @@ function renderPaymentOptions(){
 
 
   if(!container){
-
     return;
-
   }
 
 
@@ -1884,102 +1706,54 @@ function renderPaymentOptions(){
   }
 
 
-  container.innerHTML = `
+  container.innerHTML =
 
-    <div class="pay-list">
+    list
+      .map(
+        p => `
 
-      ${
-        list
-          .map(
-            p => {
+          <div
+            class="pay-row${
+              p.id === selectedPayment
+                ? ' is-active'
+                : ''
+            }"
+            data-payment="${p.id}"
+            style="
+              cursor:pointer;
+              padding:16px;
+              border:1px solid var(--line);
+              margin-bottom:8px;
+            "
+          >
 
-              const active =
-                p.id ===
-                selectedPayment;
-
-
-              return `
-
-                <div
-                  class="pay-row${
-                    active
-                      ? ' is-active'
-                      : ''
-                  }"
-                  data-payment="${p.id}"
-                  style="cursor:pointer;"
-                >
-
-                  <span class="pay-radio"></span>
+            <strong>
+              ${p.label}
+            </strong>
 
 
-                  <div
-                    style="
-                      flex:1;
-                      display:flex;
-                      justify-content:space-between;
-                      align-items:flex-start;
-                      gap:12px;
-                    "
-                  >
+            <div
+              class="small"
+              style="
+                margin-top:4px;
+                opacity:.7;
+              "
+            >
+              ${p.sub}
+            </div>
 
-                    <div>
+          </div>
 
-                      <div class="pay-row-label">
-                        ${p.label}
-                      </div>
-
-
-                      ${
-                        active
-                          ? `
-                            <div class="pay-row-sub">
-                              ${p.sub}
-                            </div>
-                          `
-                          : ''
-                      }
-
-                    </div>
-
-
-                    ${
-                      p.id === 'card'
-                        ? cardBadgesHtml()
-                        : paymentLogoHtml(p.id)
-                    }
-
-                  </div>
-
-                </div>
-
-
-                ${
-                  active
-                    ? `
-                      <div class="pay-detail-panel">
-                        ${paymentDetailHtml(p.id)}
-                      </div>
-                    `
-                    : ''
-                }
-
-              `;
-
-            }
-          )
-          .join('')
-      }
-
-    </div>
-
-  `;
+        `
+      )
+      .join('');
 
 }
 
 
+
 /* ============================================================
-   SELECTED PAYMENT LABEL
+   PAYMENT LABEL
 ============================================================ */
 
 function selectedPaymentLabel(){
@@ -2004,8 +1778,9 @@ function selectedPaymentLabel(){
 }
 
 
+
 /* ============================================================
-   SELECTED DELIVERY LABEL
+   DELIVERY LABEL
 ============================================================ */
 
 function selectedDeliveryLabel(){
@@ -2015,6 +1790,7 @@ function selectedDeliveryLabel(){
     : '';
 
 }
+
 
 
 /* ============================================================
@@ -2046,23 +1822,26 @@ function renderOrderPanel(){
 
 
   if(!panel){
-
     return false;
-
   }
 
 
-  if(items.length === 0){
+  /*
+    Placeholder mode should NEVER show
+    "Your bag is empty".
+  */
+
+  if(
+    items.length === 0
+  ){
 
     if(filled){
-      filled.style.display =
-        'none';
+      filled.style.display = 'none';
     }
 
 
     if(empty){
-      empty.style.display =
-        'block';
+      empty.style.display = 'block';
     }
 
 
@@ -2072,23 +1851,16 @@ function renderOrderPanel(){
 
 
   if(filled){
-    filled.style.display =
-      'grid';
+    filled.style.display = 'grid';
   }
 
 
   if(empty){
-    empty.style.display =
-      'none';
+    empty.style.display = 'none';
   }
 
 
-  const {
-    subtotal,
-    tax,
-    shipping,
-    total
-  } =
+  const totals =
     getOrderTotals();
 
 
@@ -2096,7 +1868,7 @@ function renderOrderPanel(){
 
     items
       .map(
-        ({product:p, qty, size}) => `
+        ({product:p,qty,size}) => `
 
           <div
             style="
@@ -2130,7 +1902,7 @@ function renderOrderPanel(){
               <br>
 
               <span class="small">
-                ${p.material}
+                ${p.material || ''}
               </span>
 
 
@@ -2145,27 +1917,16 @@ function renderOrderPanel(){
                   : ''
               }
 
-
-              ${
-                qty > 1
-                  ? `
-                    <br>
-                    <span class="small">
-                      Qty ${qty}
-                    </span>
-                  `
-                  : ''
-              }
-
             </div>
 
 
             <span class="small">
-              ${
-                fmt(
-                  p.price * qty
-                )
-              }
+
+              ${fmt(
+                p.price *
+                qty
+              )}
+
             </span>
 
           </div>
@@ -2173,6 +1934,7 @@ function renderOrderPanel(){
         `
       )
       .join('') +
+
 
     `
 
@@ -2189,7 +1951,7 @@ function renderOrderPanel(){
         </span>
 
         <span>
-          ${fmt(subtotal)}
+          ${fmt(totals.subtotal)}
         </span>
 
       </div>
@@ -2211,9 +1973,9 @@ function renderOrderPanel(){
         <span>
 
           ${
-            shipping === 0
+            totals.shipping === 0
               ? 'Complimentary'
-              : fmt(shipping)
+              : fmt(totals.shipping)
           }
 
         </span>
@@ -2235,11 +1997,13 @@ function renderOrderPanel(){
         </span>
 
         <span>
+
           ${
-            tax === 0
+            totals.tax === 0
               ? '—'
-              : fmt(tax)
+              : fmt(totals.tax)
           }
+
         </span>
 
       </div>
@@ -2260,8 +2024,9 @@ function renderOrderPanel(){
           Total
         </strong>
 
+
         <strong>
-          ${fmt(total)}
+          ${fmt(totals.total)}
         </strong>
 
       </div>
@@ -2272,6 +2037,7 @@ function renderOrderPanel(){
   return true;
 
 }
+
 
 
 /* ============================================================
@@ -2313,16 +2079,12 @@ function goToStep(step){
 
 
   if(step === '3'){
-
     renderPaymentOptions();
-
   }
 
 
   if(step === '4'){
-
     renderReview();
-
   }
 
 
@@ -2346,6 +2108,7 @@ function goToStep(step){
   }
 
 }
+
 
 
 /* ============================================================
@@ -2395,7 +2158,10 @@ function validateStep(step){
     }
 
 
-    if(!first || !last){
+    if(
+      !first ||
+      !last
+    ){
 
       return 'Please enter your full name.';
 
@@ -2413,6 +2179,7 @@ function validateStep(step){
     }
 
   }
+
 
 
   if(step === '2'){
@@ -2452,7 +2219,10 @@ function validateStep(step){
     }
 
 
-    if(!city || !province){
+    if(
+      !city ||
+      !province
+    ){
 
       return 'Please enter your city and province.';
 
@@ -2469,15 +2239,14 @@ function validateStep(step){
     }
 
 
-    if(
-      !selectedDelivery
-    ){
+    if(!selectedDelivery){
 
       return 'Please select a delivery option.';
 
     }
 
   }
+
 
 
   if(step === '3'){
@@ -2488,12 +2257,13 @@ function validateStep(step){
 
     }
 
+
     if(
       selectedPayment === 'bank-transfer-domestic' &&
       !selectedBank
     ){
 
-      return 'Please choose a bank for the Virtual Account transfer.';
+      return 'Please choose a bank.';
 
     }
 
@@ -2505,18 +2275,14 @@ function validateStep(step){
 }
 
 
+
 /* ============================================================
    REVIEW
 ============================================================ */
 
 function renderReview(){
 
-  const {
-    subtotal,
-    tax,
-    shipping,
-    total
-  } =
+  const totals =
     getOrderTotals();
 
 
@@ -2583,9 +2349,7 @@ function renderReview(){
 
 
   document
-    .getElementById(
-      'review-summary'
-    )
+    .getElementById('review-summary')
     .innerHTML = `
 
       <strong>
@@ -2638,11 +2402,11 @@ function renderReview(){
 
       <br><br>
 
+
       <div
         style="
           display:flex;
           justify-content:space-between;
-          margin-top:8px;
         "
       >
 
@@ -2651,7 +2415,7 @@ function renderReview(){
         </span>
 
         <span>
-          ${fmt(subtotal)}
+          ${fmt(totals.subtotal)}
         </span>
 
       </div>
@@ -2669,11 +2433,13 @@ function renderReview(){
         </span>
 
         <span>
+
           ${
-            shipping === 0
+            totals.shipping === 0
               ? 'Complimentary'
-              : fmt(shipping)
+              : fmt(totals.shipping)
           }
+
         </span>
 
       </div>
@@ -2691,11 +2457,13 @@ function renderReview(){
         </span>
 
         <span>
+
           ${
-            tax === 0
+            totals.tax === 0
               ? '—'
-              : fmt(tax)
+              : fmt(totals.tax)
           }
+
         </span>
 
       </div>
@@ -2716,7 +2484,7 @@ function renderReview(){
         </strong>
 
         <strong>
-          ${fmt(total)}
+          ${fmt(totals.total)}
         </strong>
 
       </div>
@@ -2726,89 +2494,138 @@ function renderReview(){
 }
 
 
+
 /* ============================================================
    BUILD ORDER
 ============================================================ */
 
 function buildOrder(){
 
-  const items = getCartItems();
+  const items =
+    getCartItems();
 
-  const shippingCost =
-    selectedDelivery
-      ? selectedDelivery.cost
-      : 0;
 
   return {
 
-    items: items.map(
-      ({product:p, qty, size}) => ({
+    items:
 
-        productId: p.id,
+      items.map(
+        ({product:p,qty,size}) => ({
 
-        qty,
+          productId:p.id,
 
-        size: size || null
+          qty,
 
-      })
-    ),
+          size:size || null
+
+        })
+      ),
+
 
     customerName:
-      `${document.getElementById('f-first').value.trim()} ${document.getElementById('f-last').value.trim()}`.trim(),
+
+      `${
+        document
+          .getElementById('f-first')
+          .value
+          .trim()
+      } ${
+        document
+          .getElementById('f-last')
+          .value
+          .trim()
+      }`.trim(),
+
 
     customerEmail:
-      document.getElementById('f-email').value.trim(),
+
+      document
+        .getElementById('f-email')
+        .value
+        .trim(),
+
 
     customerPhone:
-      document.getElementById('f-phone').value.trim(),
+
+      document
+        .getElementById('f-phone')
+        .value
+        .trim(),
+
 
     country:
-      document.getElementById('f-country').value,
+
+      document
+        .getElementById('f-country')
+        .value,
+
 
     currency:
+
       currentCurrencyCode(),
 
+
     shippingAddress:
+
       [
-        document.getElementById('f-address').value.trim(),
-        document.getElementById('f-city').value.trim(),
-        document.getElementById('f-province').value.trim(),
-        document.getElementById('f-postal').value.trim(),
-        document.getElementById('f-country').value
+
+        document
+          .getElementById('f-address')
+          .value
+          .trim(),
+
+        document
+          .getElementById('f-city')
+          .value
+          .trim(),
+
+        document
+          .getElementById('f-province')
+          .value
+          .trim(),
+
+        document
+          .getElementById('f-postal')
+          .value
+          .trim(),
+
+        document
+          .getElementById('f-country')
+          .value
+
       ]
       .filter(Boolean)
       .join(', '),
 
-    /* =========================
-       DELIVERY
-    ========================= */
 
     deliveryMethod:
+
       selectedDelivery
         ? selectedDelivery.label
         : null,
 
-    deliveryMethodLabel:
-      selectedDelivery
-        ? selectedDelivery.label
-        : null,
 
     shippingCost:
 
-      shippingCost,
+      selectedDelivery
+        ? selectedDelivery.cost
+        : 0,
 
-    /* =========================
-       PAYMENT
-    ========================= */
 
     paymentMethod:
+
       selectedPayment || null,
 
+
     paymentMethodLabel:
+
       selectedPaymentLabel() || null,
 
+
     bankCode:
-      selectedPayment === 'bank-transfer-domestic'
+
+      selectedPayment ===
+      'bank-transfer-domestic'
         ? selectedBank
         : null
 
@@ -2817,96 +2634,224 @@ function buildOrder(){
 }
 
 
+
 /* ============================================================
-   ORDER REFERENCE NUMBER
-   ---------------------------------------------------------
-   Generated client-side (no backend order API is used) — just
-   a short, unique-enough reference so the shopper and the
-   CHARMENTIST team can both refer to the same order in chat.
+   ORDER NUMBER
 ============================================================ */
 
 function generateOrderNumber(){
 
-  const now = new Date();
+  const now =
+    new Date();
+
 
   const stamp =
-    `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+    `${
+      now.getFullYear()
+    }${
+      String(
+        now.getMonth()+1
+      ).padStart(2,'0')
+    }${
+      String(
+        now.getDate()
+      ).padStart(2,'0')
+    }`;
+
 
   const rand =
-    Math.random().toString(36).slice(2,6).toUpperCase();
+    Math
+      .random()
+      .toString(36)
+      .slice(2,6)
+      .toUpperCase();
+
 
   return `CHM-${stamp}-${rand}`;
 
 }
 
 
+
 /* ============================================================
-   BUILD WHATSAPP MESSAGE
-   ---------------------------------------------------------
-   Turns the cart, the totals and everything the shopper typed
-   into Step 1–3 into one nicely formatted WhatsApp message —
-   written in the language that matches the country they picked
-   in Step 1 (see LANGUAGE_BY_COUNTRY above). Nothing here is
-   ever sent blank.
+   WHATSAPP MESSAGE
 ============================================================ */
 
-function buildWhatsAppMessage(order, items, totals){
+function buildWhatsAppMessage(
+  order,
+  items,
+  totals
+){
 
-  const t = WA_I18N[currentLanguageCode()] || WA_I18N.en;
+  const t =
+    WA_I18N[
+      currentLanguageCode()
+    ] ||
+    WA_I18N.en;
 
-  const productBaseUrl =
-    window.location.href.replace(/checkout\.html.*$/, '');
 
   const lines = [];
 
-  lines.push(t.greeting);
-  lines.push('');
-  lines.push(t.intro);
-  lines.push('');
-  lines.push(`— ${t.items_header} —`);
 
-  items.forEach((it, idx) => {
+  lines.push(
+    t.greeting
+  );
 
-    const p = it.product;
-    const sizeTxt = it.size ? ` | ${t.size}: ${it.size}` : '';
-
-    lines.push(`${idx+1}. ${p.name} — ${p.material}`);
-    lines.push(`   ${t.qty}: ${it.qty}${sizeTxt} | ${fmt(p.price * it.qty)}`);
-    lines.push(`   ${productBaseUrl}product.html?id=${encodeURIComponent(p.id)}`);
-
-  });
 
   lines.push('');
-  lines.push(`— ${t.summary_header} —`);
-  lines.push(`${t.subtotal}: ${fmt(totals.subtotal)}`);
-  lines.push(`${t.shipping}: ${totals.shipping === 0 ? t.complimentary : fmt(totals.shipping)}`);
-  lines.push(`${t.tax}: ${totals.tax === 0 ? '—' : fmt(totals.tax)}`);
-  lines.push(`${t.total}: ${fmt(totals.total)}`);
+
+
+  lines.push(
+    t.intro
+  );
+
+
   lines.push('');
-  lines.push(`— ${t.delivery_header} —`);
-  lines.push(`${t.delivery_method}: ${selectedDeliveryLabel()}`);
-  lines.push(`${t.payment_method}: ${selectedPaymentLabel()}`);
+
+
+  lines.push(
+    `— ${t.items_header} —`
+  );
+
+
+  items.forEach(
+    (it,index) => {
+
+      const p =
+        it.product;
+
+
+      const sizeTxt =
+        it.size
+          ? ` | ${t.size}: ${it.size}`
+          : '';
+
+
+      lines.push(
+        `${index+1}. ${p.name} — ${p.material || ''}`
+      );
+
+
+      lines.push(
+        `   ${t.qty}: ${it.qty}${sizeTxt} | ${fmt(p.price * it.qty)}`
+      );
+
+    }
+  );
+
+
   lines.push('');
-  lines.push(`— ${t.shipping_header} —`);
-  lines.push(order.customerName);
-  lines.push(order.customerPhone);
-  lines.push(order.customerEmail);
-  lines.push(order.shippingAddress);
+
+
+  lines.push(
+    `— ${t.summary_header} —`
+  );
+
+
+  lines.push(
+    `${t.subtotal}: ${fmt(totals.subtotal)}`
+  );
+
+
+  lines.push(
+    `${t.shipping}: ${
+      totals.shipping === 0
+        ? t.complimentary
+        : fmt(totals.shipping)
+    }`
+  );
+
+
+  lines.push(
+    `${t.tax}: ${
+      totals.tax === 0
+        ? '—'
+        : fmt(totals.tax)
+    }`
+  );
+
+
+  lines.push(
+    `${t.total}: ${fmt(totals.total)}`
+  );
+
+
   lines.push('');
-  lines.push(`${t.order_ref}: ${order.orderNumber}`);
+
+
+  lines.push(
+    `— ${t.delivery_header} —`
+  );
+
+
+  lines.push(
+    `${t.delivery_method}: ${selectedDeliveryLabel()}`
+  );
+
+
+  lines.push(
+    `${t.payment_method}: ${selectedPaymentLabel()}`
+  );
+
+
   lines.push('');
-  lines.push(t.closing);
+
+
+  lines.push(
+    `— ${t.shipping_header} —`
+  );
+
+
+  lines.push(
+    order.customerName
+  );
+
+
+  lines.push(
+    order.customerPhone
+  );
+
+
+  lines.push(
+    order.customerEmail
+  );
+
+
+  lines.push(
+    order.shippingAddress
+  );
+
+
+  lines.push('');
+
+
+  lines.push(
+    `${t.order_ref}: ${order.orderNumber}`
+  );
+
+
+  lines.push('');
+
+
+  lines.push(
+    t.closing
+  );
+
 
   return lines.join('\n');
 
 }
 
 
+
 /* ============================================================
    SUCCESS
 ============================================================ */
 
-function showOrderSuccess(orderNumber, waUrl){
+function showOrderSuccess(
+  orderNumber,
+  waUrl
+){
 
   document
     .getElementById(
@@ -2921,9 +2866,14 @@ function showOrderSuccess(orderNumber, waUrl){
       'checkout-wa-link'
     );
 
-  if(waLink && waUrl){
 
-    waLink.href = waUrl;
+  if(
+    waLink &&
+    waUrl
+  ){
+
+    waLink.href =
+      waUrl;
 
   }
 
@@ -2952,14 +2902,15 @@ function showOrderSuccess(orderNumber, waUrl){
       'block';
 
 
-  /*
-    Clear cart only after the order has
-    successfully been handed off to WhatsApp.
-  */
+  if(
+    !CHECKOUT_PLACEHOLDER_MODE
+  ){
 
-  localStorage.removeItem(
-    'charm_cart'
-  );
+    localStorage.removeItem(
+      'charm_cart'
+    );
+
+  }
 
 
   if(
@@ -2983,13 +2934,9 @@ function showOrderSuccess(orderNumber, waUrl){
 }
 
 
+
 /* ============================================================
    PLACE ORDER
-   ---------------------------------------------------------
-   No payment gateway and no backend order API — Step 3 hands
-   the whole order straight to CHARMENTIST's WhatsApp, as a
-   ready-to-send, nicely formatted message in the shopper's
-   own language.
 ============================================================ */
 
 async function handlePlaceOrder(){
@@ -3004,27 +2951,6 @@ async function handlePlaceOrder(){
     !button ||
     button.disabled
   ){
-
-    return;
-
-  }
-
-
-  /*
-    Prices shown to the shopper (and inside the WhatsApp
-    message) depend on a live exchange rate for non-USD
-    currencies — never hand off an order built on a rate
-    we don't actually have.
-  */
-
-  if(
-    currentCurrencyCode() !== 'USD' &&
-    !FX_AVAILABLE
-  ){
-
-    alert(
-      'The current exchange rate is temporarily unavailable. Please wait a moment and try again.'
-    );
 
     return;
 
@@ -3059,10 +2985,20 @@ async function handlePlaceOrder(){
     const items =
       getCartItems();
 
-    if(items.length === 0){
+
+    /*
+      PLACEHOLDER MODE:
+
+      We intentionally DO NOT reject
+      an empty real cart here.
+    */
+
+    if(
+      items.length === 0
+    ){
 
       throw new Error(
-        'Your bag is empty.'
+        'Checkout placeholder product could not be loaded.'
       );
 
     }
@@ -3070,6 +3006,7 @@ async function handlePlaceOrder(){
 
     const order =
       buildOrder();
+
 
     order.orderNumber =
       generateOrderNumber();
@@ -3088,7 +3025,9 @@ async function handlePlaceOrder(){
 
 
     const waUrl =
-      `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(message)}`;
+      `https://wa.me/${WA_PHONE}?text=${
+        encodeURIComponent(message)
+      }`;
 
 
     window.open(
@@ -3113,12 +3052,13 @@ async function handlePlaceOrder(){
 
     alert(
       error.message ||
-      'We could not place your order. Please try again.'
+      'We could not place your order.'
     );
 
 
     button.disabled =
       false;
+
 
     button.textContent =
       'Place Order →';
@@ -3128,25 +3068,18 @@ async function handlePlaceOrder(){
 }
 
 
+
 /* ============================================================
    INITIALIZATION
 ============================================================ */
-
 
 document.addEventListener(
   'DOMContentLoaded',
   async () => {
 
-    /*
-      Bind checkout navigation FIRST.
-
-      Do not wait for exchange-rate/network requests before
-      attaching the click handlers. A slow or blocked FX API
-      must never make the checkout buttons dead.
-    */
 
     /* ========================================================
-       COUNTRY CHANGE
+       COUNTRY
     ======================================================== */
 
     document
@@ -3172,27 +3105,12 @@ document.addEventListener(
               : 'State / Province / Region';
 
 
-          /*
-            Reset delivery because domestic
-            and international options differ.
-          */
-
           selectedDelivery =
             null;
 
 
-          /*
-            Reset payment because domestic
-            and international methods differ.
-          */
-
           selectedPayment =
             null;
-
-
-          showCurrencyToast(
-            country
-          );
 
 
           await updateExchangeRate();
@@ -3208,6 +3126,7 @@ document.addEventListener(
       );
 
 
+
     /* ========================================================
        FORM EVENTS
     ======================================================== */
@@ -3219,6 +3138,7 @@ document.addEventListener(
       .addEventListener(
         'click',
         e => {
+
 
           const next =
             e.target.closest(
@@ -3244,15 +3164,8 @@ document.addEventListener(
             );
 
 
-          const bank =
-            e.target.closest(
-              '[data-bank]'
-            );
 
-
-          /*
-            NEXT
-          */
+          /* NEXT */
 
           if(next){
 
@@ -3266,9 +3179,7 @@ document.addEventListener(
 
 
             if(!panel){
-
               return;
-
             }
 
 
@@ -3291,26 +3202,6 @@ document.addEventListener(
             }
 
 
-            /*
-              FX must be available before
-              proceeding to payment/review.
-            */
-
-            if(
-              currentStep !== '1' &&
-              currentCurrencyCode() !== 'USD' &&
-              !FX_AVAILABLE
-            ){
-
-              alert(
-                'The current exchange rate is unavailable. Please wait and try again.'
-              );
-
-              return;
-
-            }
-
-
             goToStep(
               next.dataset.next
             );
@@ -3321,9 +3212,8 @@ document.addEventListener(
           }
 
 
-          /*
-            BACK
-          */
+
+          /* BACK */
 
           if(back){
 
@@ -3340,9 +3230,8 @@ document.addEventListener(
           }
 
 
-          /*
-            DELIVERY
-          */
+
+          /* DELIVERY */
 
           if(delivery){
 
@@ -3367,14 +3256,11 @@ document.addEventListener(
 
               selectedDelivery = {
 
-                id:
-                  option.id,
+                id:option.id,
 
-                label:
-                  option.label,
+                label:option.label,
 
-                cost:
-                  option.cost
+                cost:option.cost
 
               };
 
@@ -3385,20 +3271,19 @@ document.addEventListener(
 
             renderOrderPanel();
 
-
             return;
 
           }
 
 
-          /*
-            PAYMENT
-          */
+
+          /* PAYMENT */
 
           if(payment){
 
             selectedPayment =
               payment.dataset.payment;
+
 
             selectedBank =
               null;
@@ -3406,19 +3291,21 @@ document.addEventListener(
 
             renderPaymentOptions();
 
-
             return;
 
           }
 
 
-          /*
-            VA BANK PICK
-          */
+
+          /* BANK */
+
+          const bank =
+            e.target.closest(
+              '[data-bank]'
+            );
+
 
           if(bank){
-
-            e.preventDefault();
 
             selectedBank =
               bank.dataset.bank;
@@ -3426,13 +3313,13 @@ document.addEventListener(
 
             renderPaymentOptions();
 
-
             return;
 
           }
 
         }
       );
+
 
 
     /* ========================================================
@@ -3449,17 +3336,24 @@ document.addEventListener(
       );
 
 
+
     /* ========================================================
-       INITIAL DATA / NETWORK
+       INITIAL RENDER
     ======================================================== */
 
+    const hasItems =
+      renderOrderPanel();
+
+
     /*
-      Render the order/cart first. If the cart is empty, the
-      checkout UI should remain unavailable as before.
+      In placeholder mode, we MUST
+      allow checkout even if real cart
+      is empty.
     */
 
     if(
-      !renderOrderPanel()
+      !hasItems &&
+      !CHECKOUT_PLACEHOLDER_MODE
     ){
 
       return;
@@ -3467,17 +3361,13 @@ document.addEventListener(
     }
 
 
-    /*
-      These are deliberately run AFTER all click handlers have
-      been attached. Network/API delays can no longer disable
-      checkout navigation.
-    */
-
     await updateExchangeRate();
+
 
     renderDeliveryOptions();
 
     renderPaymentOptions();
+
 
 
     /* ========================================================
@@ -3510,23 +3400,13 @@ document.addEventListener(
 
 
               if(!active){
-
                 return;
-
               }
 
 
               const current =
                 active.dataset.stepTab;
 
-
-              /*
-                Only allow going backwards
-                using the tabs.
-
-                Forward movement must pass
-                validation.
-              */
 
               if(
                 parseInt(target,10) <=
