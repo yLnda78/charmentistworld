@@ -13,21 +13,64 @@ const adminRoutes = require('./routes/admin');
 
 const app = express();
 
-// Only allow your actual storefront domain(s) to call this API from a
-// browser. Set CORS_ORIGIN in .env (comma-separated for multiple).
-const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
+// ============================================================
+// CORS
+// ============================================================
+
+const allowedOrigins = (process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map(s => s.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+
+// GitHub Pages storefront
+const githubPagesOrigin = 'https://ylnda78.github.io';
+
 app.use(cors({
   origin: (origin, cb) => {
-    if(!origin || allowedOrigins.includes(origin)) return cb(null, true);
+    // Allow requests without an Origin header
+    // (for example server-to-server requests or health checks)
+    if (!origin) {
+      return cb(null, true);
+    }
+
+    const normalizedOrigin = origin.replace(/\/$/, '');
+
+    // Allow configured origins OR the GitHub Pages origin
+    if (
+      allowedOrigins.includes(normalizedOrigin) ||
+      normalizedOrigin === githubPagesOrigin
+    ) {
+      return cb(null, true);
+    }
+
+    console.error('CORS rejected origin:', origin);
+    console.error('Allowed origins:', allowedOrigins);
+
     cb(new Error('Not allowed by CORS'));
   }
 }));
+
+// ============================================================
+// BODY PARSER
+// ============================================================
+
 app.use(express.json());
 
-// Basic brute-force protection on auth endpoints specifically — login/
-// register are the routes worth limiting hardest.
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
+// ============================================================
+// AUTH RATE LIMIT
+// ============================================================
+
+// Basic brute-force protection on authentication endpoints.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30
+});
+
 app.use('/api/auth', authLimiter, authRoutes);
+
+// ============================================================
+// API ROUTES
+// ============================================================
 
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
@@ -36,14 +79,32 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 
-app.get('/api/health', (req, res) => res.json({ ok: true }));
+// ============================================================
+// HEALTH CHECK
+// ============================================================
 
-// Centralized error handler — so an unexpected throw anywhere above
-// returns clean JSON instead of leaking a stack trace to the browser.
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: 'Something went wrong. Please try again.' });
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true });
 });
 
+// ============================================================
+// ERROR HANDLER
+// ============================================================
+
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  res.status(500).json({
+    error: 'Something went wrong. Please try again.'
+  });
+});
+
+// ============================================================
+// START SERVER
+// ============================================================
+
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`CHARMENTIST API running on http://localhost:${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`CHARMENTIST API running on http://localhost:${PORT}`);
+});
