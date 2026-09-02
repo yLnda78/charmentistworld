@@ -25,4 +25,4 @@
 // doesn't work" once a Charmentist site goes live.
 // ---------------------------------------------------------------------
 
-window.CHARM_API_BASE = 'http://localhost:4000/api';
+window.CHARM_API_BASE = 'https://charmentistworld-production.up.railway.app/api';
