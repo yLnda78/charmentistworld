@@ -791,6 +791,13 @@ async function submitOrderToBackend(order){
 
     if(!res.ok || !data || !data.order){
       console.error('Order was not saved to the backend:', data && data.error);
+      // TEMPORARY, for debugging why orders aren't reaching admin.html —
+      // remove this alert() once orders are confirmed saving correctly.
+      alert(
+        'DEBUG: order was NOT saved to admin.\n' +
+        'HTTP status: ' + res.status + '\n' +
+        'Server message: ' + (data && data.error ? data.error : '(no JSON body / could not parse response)')
+      );
       return null;
     }
 
@@ -798,6 +805,11 @@ async function submitOrderToBackend(order){
 
   }catch(e){
     console.error('Order was not saved to the backend:', e);
+    // TEMPORARY debugging alert — see note above.
+    alert(
+      'DEBUG: order request failed before getting a response.\n' +
+      'Error: ' + e.message
+    );
     return null;
   }
 
