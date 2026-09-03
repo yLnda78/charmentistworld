@@ -1135,12 +1135,24 @@ function fmt(usdAmount){
     FX_RATES[currency];
 
 
+  // If we don't have a live rate for this currency (API down, currency
+  // not supported, request failed, etc.) we NEVER show a broken price to
+  // the customer — we fall back to displaying the USD amount instead.
+  // This keeps checkout usable even when the external FX API is flaky.
   if(
     typeof rate !== 'number' ||
     !FX_AVAILABLE
   ){
 
-    return 'Price unavailable';
+    const usdInfo = CURRENCY_INFO.USD;
+    const usdFormatted = usdAmount.toLocaleString(
+      'en-US',
+      {
+        minimumFractionDigits: usdInfo.decimals,
+        maximumFractionDigits: usdInfo.decimals
+      }
+    );
+    return `${usdInfo.symbol}${usdFormatted} USD (est.)`;
 
   }
 
@@ -2986,20 +2998,19 @@ async function handlePlaceOrder(){
       getCartItems();
 
 
-    /*
-      PLACEHOLDER MODE:
-
-      We intentionally DO NOT reject
-      an empty real cart here.
-    */
-
     if(
       items.length === 0
     ){
 
-      throw new Error(
-        'Checkout placeholder product could not be loaded.'
+      alert(
+        'Your bag looks empty, so we can\'t place this order. ' +
+        'Please go back to your bag, re-add the piece(s) you want, ' +
+        'then return to checkout.'
       );
+
+      window.location.href = 'cart.html';
+
+      return;
 
     }
 
