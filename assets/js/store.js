@@ -40,6 +40,14 @@ const CharmStore = (function(){
       const res = await fetch(API_BASE + path, Object.assign({
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + CharmAuth.getToken() }
       }, options));
+      // A non-2xx response (expired token, server error, etc.) is a
+      // failed sync, not a valid "empty" result — treat it as null so
+      // callers (especially pullFromServer) never mistake a failure for
+      // "the account's cart is actually empty" and wipe local data.
+      if(!res.ok){
+        console.error('Store sync failed:', path, res.status);
+        return null;
+      }
       return await res.json().catch(() => null);
     }catch(e){
       console.error('Store sync failed:', path, e);
@@ -74,7 +82,15 @@ const CharmStore = (function(){
   // keeps it null. Items are matched by id+size so the same ring in two
   // different sizes shows as two separate lines.
   function getCart(){ return read(CART_KEY); }
-  function addToCart(id, qty, size){
+  // NOTE: these three are now async and RETURN the server sync promise.
+  // Local storage is still updated first (synchronously) so the UI never
+  // waits on the network — but callers that immediately navigate the
+  // shopper to another page (e.g. "View Bag →" right after "Add to Bag")
+  // should `await` the call first. Otherwise the page they land on can
+  // run pullFromServer() and overwrite the local cart with the server's
+  // not-yet-updated copy before this PUT has actually landed, which is
+  // what was silently emptying the bag.
+  async function addToCart(id, qty, size){
     qty = qty || 1;
     size = size || null;
     const cart = getCart();
@@ -84,15 +100,15 @@ const CharmStore = (function(){
     else { cart.push({ id, qty: newQty, size }); }
     write(CART_KEY, cart);
     updateBadges();
-    apiCall('/cart/item', { method: 'PUT', body: JSON.stringify({ productId: id, size, qty: newQty }) });
+    await apiCall('/cart/item', { method: 'PUT', body: JSON.stringify({ productId: id, size, qty: newQty }) });
   }
-  function removeFromCart(id, size){
+  async function removeFromCart(id, size){
     size = size || null;
     write(CART_KEY, getCart().filter(x => !(x.id === id && (x.size || null) === size)));
     updateBadges();
-    apiCall('/cart/item?productId=' + encodeURIComponent(id) + (size ? '&size=' + encodeURIComponent(size) : ''), { method: 'DELETE' });
+    await apiCall('/cart/item?productId=' + encodeURIComponent(id) + (size ? '&size=' + encodeURIComponent(size) : ''), { method: 'DELETE' });
   }
-  function setCartQty(id, qty, size){
+  async function setCartQty(id, qty, size){
     size = size || null;
     qty = Math.max(1, qty|0);
     const cart = getCart();
@@ -101,7 +117,7 @@ const CharmStore = (function(){
       item.qty = qty;
       write(CART_KEY, cart);
       updateBadges();
-      apiCall('/cart/item', { method: 'PUT', body: JSON.stringify({ productId: id, size, qty }) });
+      await apiCall('/cart/item', { method: 'PUT', body: JSON.stringify({ productId: id, size, qty }) });
     }
   }
   function cartCount(){
@@ -127,7 +143,13 @@ const CharmStore = (function(){
       apiCall('/cart'),
       apiCall('/wishlist')
     ]);
-    if(cartRes && Array.isArray(cartRes.items)){
+    // Only trust the server's cart when it actually has items, OR the
+    // local mirror is already empty. A server response of "0 items"
+    // while the local bag has items almost always means a sync that
+    // hasn't landed yet (or failed) rather than a shopper who really
+    // emptied their bag — and overwriting in that case is exactly what
+    // was making the bag look empty right after adding something.
+    if(cartRes && Array.isArray(cartRes.items) && (cartRes.items.length > 0 || getCart().length === 0)){
       write(CART_KEY, cartRes.items.map(i => ({ id: i.productId, qty: i.qty, size: i.size || null })));
     }
     if(wishRes && Array.isArray(wishRes.items)){
@@ -205,9 +227,12 @@ const CharmStore = (function(){
           flashButton(btn, 'Sold Out');
           return;
         }
-        addToCart(id, 1);
         flashButton(btn, 'Added');
-        showBagToast(id, 1);
+        // Wait for the account sync (if logged in) to actually land
+        // before showing "View Bag →" — clicking straight into cart.html
+        // before this finished was overwriting the local bag with the
+        // server's stale (pre-add) copy on load.
+        addToCart(id, 1).finally(() => showBagToast(id, 1));
       }
     });
   }
