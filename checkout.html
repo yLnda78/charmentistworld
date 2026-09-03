@@ -762,6 +762,48 @@ const API_BASE =
   'http://localhost:4000/api';
 
 
+// Actually saves the order to the backend (so it shows up in
+// admin.html and triggers the confirmation/notification emails
+// backend/routes/orders.js already sends) instead of relying on the
+// WhatsApp message as the only record of the sale.
+//
+// This is intentionally NON-BLOCKING: if it fails for any reason
+// (backend down, validation mismatch, network hiccup), checkout
+// still completes via WhatsApp exactly as before — we just log the
+// failure and fall back to a client-generated order number. That
+// order simply won't appear in admin.html until this is retried.
+async function submitOrderToBackend(order){
+
+  try{
+
+    const res =
+      await fetch(
+        API_BASE + '/orders',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(order)
+        }
+      );
+
+    const data =
+      await res.json().catch(() => null);
+
+    if(!res.ok || !data || !data.order){
+      console.error('Order was not saved to the backend:', data && data.error);
+      return null;
+    }
+
+    return data.order;
+
+  }catch(e){
+    console.error('Order was not saved to the backend:', e);
+    return null;
+  }
+
+}
+
+
 
 /* ============================================================
    TAX
@@ -2606,8 +2648,14 @@ function buildOrder(){
 
     deliveryMethod:
 
+      // Backend matches delivery options by their `id` (e.g.
+      // 'domestic-standard'), not their display label — this used to
+      // send the label, which meant every real save would have been
+      // rejected as "Invalid delivery method." (Was never noticed
+      // because nothing ever called the save endpoint at all — see
+      // submitOrderToBackend.)
       selectedDelivery
-        ? selectedDelivery.label
+        ? selectedDelivery.id
         : null,
 
 
@@ -3013,8 +3061,20 @@ async function handlePlaceOrder(){
       buildOrder();
 
 
+    // Try to save this order to the backend FIRST so admin.html and the
+    // order-confirmation email actually have a record of it. If it
+    // succeeds, use the backend's real order number (the one that will
+    // show up in admin.html) everywhere from here on. If it fails, fall
+    // back to a client-only order number so WhatsApp checkout still
+    // works exactly as before — that order just won't be visible in
+    // admin.html.
+    const savedOrder =
+      await submitOrderToBackend(order);
+
     order.orderNumber =
-      generateOrderNumber();
+      savedOrder
+        ? savedOrder.orderNumber
+        : generateOrderNumber();
 
 
     const totals =
