@@ -199,8 +199,13 @@
       document.getElementById('p-size-wrap').scrollIntoView({ behavior:'smooth', block:'center' });
       return;
     }
-    CharmStore.addToCart(p.id, 1, selectedSize);
-    if(CharmStore.showBagToast) CharmStore.showBagToast(p.id, 1, selectedSize);
+    // Wait for the account sync to land before showing the "View Bag →"
+    // toast — otherwise clicking straight into cart.html can beat the
+    // server PUT there and the page overwrites the local bag with the
+    // server's stale (pre-add) copy, making the piece look never-added.
+    CharmStore.addToCart(p.id, 1, selectedSize).finally(() => {
+      if(CharmStore.showBagToast) CharmStore.showBagToast(p.id, 1, selectedSize);
+    });
   });
 
   renderProduct();
