@@ -1720,6 +1720,8 @@ function renderPaymentOptions(){
 
   container.innerHTML =
 
+    `<div class="pay-list">` +
+
     list
       .map(
         p => `
@@ -1731,34 +1733,29 @@ function renderPaymentOptions(){
                 : ''
             }"
             data-payment="${p.id}"
-            style="
-              cursor:pointer;
-              padding:16px;
-              border:1px solid var(--line);
-              margin-bottom:8px;
-            "
           >
 
-            <strong>
-              ${p.label}
-            </strong>
+            <div class="pay-radio"></div>
 
+            <div>
 
-            <div
-              class="small"
-              style="
-                margin-top:4px;
-                opacity:.7;
-              "
-            >
-              ${p.sub}
+              <div class="pay-row-label">
+                <strong>${p.label}</strong>
+              </div>
+
+              <div class="pay-row-sub">
+                ${p.sub}
+              </div>
+
             </div>
 
           </div>
 
         `
       )
-      .join('');
+      .join('') +
+
+    `</div>`;
 
 }
 
@@ -2269,15 +2266,12 @@ function validateStep(step){
 
     }
 
-
-    if(
-      selectedPayment === 'bank-transfer-domestic' &&
-      !selectedBank
-    ){
-
-      return 'Please choose a bank.';
-
-    }
+    // NOTE: there is currently no bank-picker UI rendered anywhere for
+    // "Bank Transfer" (no data-bank elements exist), so selectedBank can
+    // never actually be set. The old check below required it anyway,
+    // which meant choosing "Bank Transfer" permanently stuck the
+    // customer at this step with no way to satisfy the requirement.
+    // Dropped until a real bank list is built.
 
   }
 
@@ -3373,6 +3367,15 @@ document.addEventListener(
 
 
     await updateExchangeRate();
+
+
+    // BUG FIX: the order panel above was rendered BEFORE the live
+    // exchange rate came back, so it always used the "no rate yet"
+    // fallback (was: "Price unavailable", now: an estimated USD price)
+    // even once the rate had actually loaded — the currency status line
+    // would say "Live reference rate" while every price stayed wrong.
+    // Re-render it now that FX_AVAILABLE/FX_RATES are up to date.
+    renderOrderPanel();
 
 
     renderDeliveryOptions();
