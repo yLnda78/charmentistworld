@@ -1062,10 +1062,21 @@ router.get(
       );
 
 
-    if (!row) {
+    // Require the email used on the order too, so knowing/guessing an
+    // order number alone isn't enough to see someone else's name,
+    // address, and phone number. Kept as a generic "not found" either
+    // way, so this endpoint never confirms whether an order number
+    // exists to someone who doesn't also know the email.
+    const email = (req.query.email || '').trim().toLowerCase();
+
+    if (
+      !row ||
+      !email ||
+      row.customer_email.trim().toLowerCase() !== email
+    ) {
 
       return res.status(404).json({
-        error: 'Order not found.'
+        error: 'Order not found. Check your order number and email address.'
       });
 
     }
