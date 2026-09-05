@@ -261,7 +261,7 @@ const CharmStore = (function(){
             <div class="small" style="margin-top:6px;">Qty ${qty} · ${CharmData.formatPrice(p.price * qty)}</div>
           </div>
         </div>
-        <div class="bag-toast-note">This piece is made to order — production takes approximately <strong>7–8 weeks</strong> before it ships.</div>
+        <div class="bag-toast-note">This piece is made to order — production takes approximately <strong>${p.productionTime || '7–8 weeks'}</strong> before it ships.</div>
         <div class="bag-toast-actions">
           <a class="btn btn-dark" href="cart.html">View Bag →</a>
           <a class="btn btn-outline" href="checkout.html">Checkout Now</a>
