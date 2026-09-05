@@ -202,25 +202,39 @@ async function refreshProductsFromAPI(){
     const data = await res.json();
     if(!res.ok || !Array.isArray(data.products) || data.products.length === 0) return;
 
-    const mapped = data.products.map(p => ({
-      id: p.id,
-      name: p.name,
-      type: p.type,
-      collection: p.collection,
-      material: p.material || '',
-      // NOTE: prices in the database are plain integers with no currency
-      // attached — formatPrice() above still renders them with a '$'
-      // prefix. Decide on IDR vs USD before going live (see backend/README.md,
-      // Midtrans only settles in IDR) and update formatPrice() to match.
-      price: p.price,
-      img: (p.images && p.images[0]) || '',
-      gallery: (p.images && p.images.length) ? p.images : [(p.images && p.images[0]) || ''],
-      gemstones: p.gemstones || '',
-      dimensions: p.dimensions || '',
-      weight: p.weight || '',
-      desc: p.description || '',
-      stock: p.stock
-    }));
+    // The database only tracks fields an admin can actually edit (price,
+    // stock, description, etc). Curated display-only fields like
+    // productionTime and pcsTarget live purely in the bundled catalog
+    // above and are never sent by the backend — so look up each
+    // product's existing entry first and carry those fields over,
+    // instead of losing them every time this sync runs.
+    const existingById = {};
+    CHARM_PRODUCTS.forEach(p => { existingById[p.id] = p; });
+
+    const mapped = data.products.map(p => {
+      const existing = existingById[p.id] || {};
+      return {
+        id: p.id,
+        name: p.name,
+        type: p.type,
+        collection: p.collection,
+        material: p.material || '',
+        // NOTE: prices in the database are plain integers with no currency
+        // attached — formatPrice() above still renders them with a '$'
+        // prefix. Decide on IDR vs USD before going live (see backend/README.md,
+        // Midtrans only settles in IDR) and update formatPrice() to match.
+        price: p.price,
+        img: (p.images && p.images[0]) || existing.img || '',
+        gallery: (p.images && p.images.length) ? p.images : (existing.gallery || [(p.images && p.images[0]) || '']),
+        gemstones: p.gemstones || existing.gemstones || '',
+        dimensions: p.dimensions || existing.dimensions || '',
+        weight: p.weight || existing.weight || '',
+        desc: p.description || existing.desc || '',
+        stock: p.stock,
+        productionTime: existing.productionTime,
+        pcsTarget: existing.pcsTarget
+      };
+    });
     CHARM_PRODUCTS.length = 0;
     CHARM_PRODUCTS.push(...mapped);
     document.dispatchEvent(new Event('charm:products-synced'));
