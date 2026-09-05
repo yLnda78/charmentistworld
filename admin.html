@@ -205,6 +205,15 @@ function renderOrders(){
   tbody.querySelectorAll('[data-cancel-refund]').forEach(btn => {
     btn.addEventListener('click', () => cancelRefundOrder(btn.dataset.cancelRefund, btn.dataset.paymentStatus));
   });
+  tbody.querySelectorAll('[data-toggle-details]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const row = document.getElementById('details-row-' + btn.dataset.toggleDetails);
+      if(!row) return;
+      const showing = row.style.display !== 'none';
+      row.style.display = showing ? 'none' : 'table-row';
+      btn.textContent = showing ? 'Details' : 'Hide';
+    });
+  });
 
   const counts = {};
   ALL_ORDERS.forEach(o => { counts[o.status] = (counts[o.status] || 0) + 1; });
@@ -230,7 +239,32 @@ function orderRowHtml(o){
       </select>
     </td>
     <td>${date}</td>
-    <td>${canCancel ? `<button class="btn btn-danger btn-sm" data-cancel-refund="${o.id}" data-payment-status="${o.payment_status}">Cancel${o.payment_status==='paid' ? '/Refund' : ''}</button>` : ''}</td>
+    <td class="row-actions">
+      <button class="btn btn-outline btn-sm" data-toggle-details="${o.id}">Details</button>
+      ${canCancel ? `<button class="btn btn-danger btn-sm" data-cancel-refund="${o.id}" data-payment-status="${o.payment_status}">Cancel${o.payment_status==='paid' ? '/Refund' : ''}</button>` : ''}
+    </td>
+  </tr>
+  <tr class="details-row" id="details-row-${o.id}" style="display:none;">
+    <td colspan="8" style="background:#faf8f5;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:6px 4px;">
+        <div>
+          <p class="small" style="margin:0 0 4px;"><strong>Shipping address</strong></p>
+          <p class="small" style="white-space:pre-wrap; margin:0 0 10px;">${o.shipping_address || '—'}</p>
+          <p class="small" style="margin:0 0 4px;"><strong>Phone</strong></p>
+          <p class="small" style="margin:0 0 10px;">${o.customer_phone || '—'}</p>
+          <p class="small" style="margin:0 0 4px;"><strong>Country</strong></p>
+          <p class="small" style="margin:0;">${o.country || '—'}</p>
+        </div>
+        <div>
+          <p class="small" style="margin:0 0 4px;"><strong>Payment method</strong></p>
+          <p class="small" style="margin:0 0 10px;">${o.payment_method_label || o.payment_method || '—'}${o.va_bank ? ` — VA ${String(o.va_bank).toUpperCase()} ${o.va_number || ''}` : ''}</p>
+          <p class="small" style="margin:0 0 4px;"><strong>Delivery method</strong></p>
+          <p class="small" style="margin:0 0 10px;">${o.delivery_method_label || o.delivery_method || '—'}</p>
+          <p class="small" style="margin:0 0 4px;"><strong>Items</strong></p>
+          <p class="small" style="margin:0;">${o.items.map(i => `${i.name} × ${i.qty} (${fmtIDR(i.price)})`).join('<br>')}</p>
+        </div>
+      </div>
+    </td>
   </tr>`;
 }
 async function updateOrderStatus(orderId, status){
