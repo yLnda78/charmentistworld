@@ -224,6 +224,7 @@ function renderFooter(){
           <div class="footer-col">
             <h5>Client Services</h5>
             <a href="client-services.html">Client Services</a>
+            <a href="track-order.html">Track Your Order</a>
             <a href="shipping-delivery.html">Shipping &amp; Returns</a>
             <a href="authenticity.html">Authentications</a>
             <a href="care-aftercare.html">Product Care &amp; Repairs</a>
