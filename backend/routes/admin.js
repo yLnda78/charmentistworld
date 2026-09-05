@@ -105,12 +105,16 @@ router.patch('/orders/:id', (req, res) => {
 router.post('/orders/:id/cancel-refund', async (req, res) => {
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
   if(!order) return res.status(404).json({ error: 'Order not found.' });
-  if(!order.midtrans_order_id){
-    return res.status(400).json({ error: 'This order has no associated payment transaction.' });
-  }
 
   try{
-    if(order.payment_status === 'paid'){
+    if(!order.midtrans_order_id){
+      // No real Midtrans transaction ever got created for this order
+      // (e.g. it was confirmed manually via WhatsApp/bank transfer, or
+      // the Midtrans call failed at checkout time) — nothing to
+      // cancel/refund on Midtrans's side, just update our own records.
+      db.prepare("UPDATE orders SET payment_status = 'failed', status = 'cancelled', updated_at = datetime('now') WHERE id = ?")
+        .run(order.id);
+    }else if(order.payment_status === 'paid'){
       await core.transaction.refund(order.midtrans_order_id, {
         reason: req.body.reason || 'Refunded by store admin'
       });
