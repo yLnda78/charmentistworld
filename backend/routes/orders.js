@@ -4,7 +4,7 @@ const midtransClient = require('midtrans-client');
 const db = require('../db');
 const { optionalAuth, requireAuth } = require('../middleware/auth');
 const { sendMail } = require('../utils/mail');
-const { getUsdToIdrRate } = require('../utils/fx');
+const { getUsdToCurrencyRate, roundForCurrency } = require('../utils/fx');
 
 const router = express.Router();
 
@@ -511,6 +511,41 @@ router.post(
       finalShippingCost;
 
 
+    /* ========================================================
+       CURRENCY CONVERSION
+       --------------------------------------------------------
+       Product prices, delivery costs, and therefore raw subtotal/
+       total above are all in USD units (that's what's in the
+       product database). finalCurrency is just the currency code
+       the customer is billed in based on their country — convert
+       the actual numbers now, before anything is stored, so what
+       ends up in the database (and later shown in admin.html,
+       track-order.html, and confirmation emails) is a real amount
+       in that currency, not a USD number mislabeled as IDR/EUR/etc.
+    ======================================================== */
+
+    const fxRate =
+      await getUsdToCurrencyRate(finalCurrency);
+
+    const convertedItems =
+      orderItems.map(item => ({
+        ...item,
+        price: roundForCurrency(item.price * fxRate, finalCurrency)
+      }));
+
+    const convertedSubtotal =
+      convertedItems.reduce(
+        (sum, item) => sum + item.price * item.qty,
+        0
+      );
+
+    const convertedShippingCost =
+      roundForCurrency(finalShippingCost * fxRate, finalCurrency);
+
+    const convertedTotal =
+      convertedSubtotal + convertedShippingCost;
+
+
     const orderNumber =
       generateOrderNumber();
 
@@ -604,11 +639,11 @@ router.post(
         deliveryMethod,
         finalDeliveryMethodLabel,
 
-        JSON.stringify(orderItems),
+        JSON.stringify(convertedItems),
 
-        subtotal,
-        finalShippingCost,
-        total
+        convertedSubtotal,
+        convertedShippingCost,
+        convertedTotal
 
       );
 
@@ -648,38 +683,33 @@ router.post(
 
         /*
           Midtrans only accepts IDR, as a whole number with no decimals.
-          The product database (and therefore `total`/`subtotal`/item
-          prices computed above) is in USD, so everything sent to
-          Midtrans has to be converted using a live USD -> IDR rate —
-          never sent as raw USD numbers, which would charge a wildly
-          wrong amount.
+          Since Midtrans-backed payment methods (card/qris/bank transfer)
+          are domestic-only, finalCurrency is always 'IDR' here — so the
+          already-converted totals computed above are exactly what
+          Midtrans needs, with no separate conversion required.
 
-          Item-level prices are converted and rounded individually,
-          then any rounding gap versus the overall gross_amount is
-          folded into the last line item so Midtrans's line-item sum
-          always matches gross_amount exactly.
+          Item-level prices were converted and rounded individually
+          above; any rounding gap versus the overall total is folded
+          into the last line item so Midtrans's line-item sum always
+          matches gross_amount exactly.
         */
 
-        const idrRate =
-          await getUsdToIdrRate();
-
-        const grossAmountIdr =
-          Math.round(total * idrRate);
+        const grossAmountIdr = convertedTotal;
 
         const idrLineItems = [
 
-          ...orderItems.map(i => ({
+          ...convertedItems.map(i => ({
             id: i.id,
             name: i.name.slice(0, 50),
-            price: Math.round(i.price * idrRate),
+            price: i.price,
             quantity: i.qty
           })),
 
-          ...(finalShippingCost > 0
+          ...(convertedShippingCost > 0
             ? [{
                 id: deliveryMethod,
                 name: finalDeliveryMethodLabel,
-                price: Math.round(finalShippingCost * idrRate),
+                price: convertedShippingCost,
                 quantity: 1
               }]
             : [])
@@ -886,7 +916,7 @@ router.post(
         <p>
           Total:
           <strong>
-            ${finalCurrency} ${total.toLocaleString('en-US')}
+            ${finalCurrency} ${convertedTotal.toLocaleString('en-US')}
           </strong>
         </p>
 
@@ -899,7 +929,7 @@ router.post(
           vaNumber
             ? `
               <p>
-                Transfer <strong>${finalCurrency} ${total.toLocaleString('en-US')}</strong>
+                Transfer <strong>${finalCurrency} ${convertedTotal.toLocaleString('en-US')}</strong>
                 to your ${vaBank.toUpperCase()} Virtual Account number:
                 <strong>${vaNumber}</strong>${vaExpiry ? ` (before ${vaExpiry})` : ''}.
                 Your order confirms automatically once the transfer is received —
@@ -936,10 +966,10 @@ router.post(
     if (process.env.ADMIN_EMAIL) {
       sendMail({
         to: process.env.ADMIN_EMAIL,
-        subject: `New order — ${orderNumber} (${finalCurrency} ${total.toLocaleString('en-US')})`,
+        subject: `New order — ${orderNumber} (${finalCurrency} ${convertedTotal.toLocaleString('en-US')})`,
         html: `
           <p>New order <strong>${orderNumber}</strong> from ${customerName} (${customerEmail}).</p>
-          <p>Total: <strong>${finalCurrency} ${total.toLocaleString('en-US')}</strong></p>
+          <p>Total: <strong>${finalCurrency} ${convertedTotal.toLocaleString('en-US')}</strong></p>
           <p>Payment: ${finalPaymentMethodLabel}${vaNumber ? ` — VA ${vaBank.toUpperCase()} ${vaNumber}` : ''}</p>
           <p>Delivery: ${finalDeliveryMethodLabel}</p>
           <p>Open the admin dashboard to view items and manage this order.</p>
@@ -961,12 +991,14 @@ router.post(
 
         orderNumber,
 
-        subtotal,
+        subtotal:
+          convertedSubtotal,
 
         shippingCost:
-          finalShippingCost,
+          convertedShippingCost,
 
-        total,
+        total:
+          convertedTotal,
 
         currency:
           finalCurrency,
