@@ -135,7 +135,16 @@ async function adminFetch(path, options){
 }
 
 const STATUS_LABELS = { pending:'Pending Payment', paid:'Paid', processing:'In Production', shipped:'Shipped', completed:'Completed', cancelled:'Cancelled' };
-const fmtIDR = n => 'Rp' + Number(n||0).toLocaleString('id-ID');
+// Orders now store their total/item prices already converted into the
+// customer's own billing currency (see backend routes/orders.js), so
+// format using that currency's code instead of always assuming IDR.
+const fmtMoney = (n, currency) => {
+  try{
+    return new Intl.NumberFormat('en-US', { style:'currency', currency: currency || 'IDR', maximumFractionDigits: 2 }).format(Number(n) || 0);
+  }catch(e){
+    return (currency || 'IDR') + ' ' + Number(n || 0).toLocaleString('en-US');
+  }
+};
 
 // ---------- Gate ----------
 function showDashboard(){
@@ -240,7 +249,7 @@ function orderRowHtml(o){
     <td>${o.order_number}</td>
     <td>${o.customer_name}<br><span class="small">${o.customer_email}</span></td>
     <td>${itemLabel}</td>
-    <td>${fmtIDR(o.total)}</td>
+    <td>${fmtMoney(o.total, o.currency)}</td>
     <td><span class="badge badge-${o.payment_status === 'paid' ? 'paid' : 'pending'}">${o.payment_status}</span></td>
     <td>
       <select data-status-select="${o.id}">
@@ -270,7 +279,7 @@ function orderRowHtml(o){
           <p class="small" style="margin:0 0 4px;"><strong>Delivery method</strong></p>
           <p class="small" style="margin:0 0 10px;">${o.delivery_method_label || o.delivery_method || '—'}</p>
           <p class="small" style="margin:0 0 4px;"><strong>Items</strong></p>
-          <p class="small" style="margin:0;">${o.items.map(i => `${i.name} × ${i.qty} (${fmtIDR(i.price)})`).join('<br>')}</p>
+          <p class="small" style="margin:0;">${o.items.map(i => `${i.name} × ${i.qty} (${fmtMoney(i.price, o.currency)})`).join('<br>')}</p>
         </div>
       </div>
     </td>
