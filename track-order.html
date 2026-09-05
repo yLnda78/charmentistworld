@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Track Your Order — CHARMENTIST</title><link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .track-form{ max-width:420px; margin:0 auto; text-align:left; }
+  .track-form .field{ margin-bottom:16px; }
+  .track-form label{ display:block; font-size:.72rem; letter-spacing:.05em; text-transform:uppercase; color:var(--muted,#8a8175); margin-bottom:6px; }
+  .track-form input{
+    width:100%; border:1px solid var(--line,#ddd6cb); background:transparent;
+    padding:10px 12px; font-size:.85rem; font-family:inherit; color:var(--text,#141414);
+  }
+  .track-form input:focus{ outline:none; border-color:var(--text,#141414); }
+  .track-msg{ font-size:.8rem; margin-top:14px; }
+  .track-msg.err{ color:#a33; }
+
+  .track-result{ max-width:560px; margin:40px auto 0; text-align:left; display:none; }
+  .track-steps{ display:flex; justify-content:space-between; margin:28px 0 32px; position:relative; }
+  .track-steps::before{
+    content:''; position:absolute; top:9px; left:0; right:0; height:1px; background:var(--line,#ddd6cb); z-index:0;
+  }
+  .track-step{ position:relative; z-index:1; text-align:center; flex:1; }
+  .track-step .dot{
+    width:18px; height:18px; border-radius:50%; background:#fff; border:1px solid var(--line,#ddd6cb);
+    margin:0 auto 8px;
+  }
+  .track-step.is-done .dot{ background:var(--text,#141414); border-color:var(--text,#141414); }
+  .track-step .label{ font-size:.66rem; letter-spacing:.04em; text-transform:uppercase; color:var(--muted,#8a8175); }
+  .track-step.is-done .label{ color:var(--text,#141414); }
+  .track-cancelled-note{ font-size:.8rem; color:#a33; text-align:center; margin:-10px 0 24px; }
+
+  .track-order-summary{ border:1px solid var(--line,#ddd6cb); padding:20px; }
+  .track-order-summary .row{ display:flex; justify-content:space-between; font-size:.85rem; padding:6px 0; }
+  .track-order-summary .row.total{ border-top:1px solid var(--line,#ddd6cb); margin-top:8px; padding-top:12px; font-weight:600; }
+</style>
+</head>
+<body data-page="track-order.html">
+<div id="site-header" data-variant="light"></div>
+
+<section class="hero" style="min-height:28vh; background:none; color:var(--text); align-items:center;">
+  <div class="hero-inner" style="color:var(--text);">
+    <div class="hero-left">
+      <div><h1 class="hero-title">TRACK YOUR ORDER</h1></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" style="padding-top:0;">
+  <div class="wrap center-col text-center" style="margin-bottom:30px;">
+    <p class="small" style="max-width:440px; margin:0 auto;">
+      Enter your order number and the email address you used at checkout to see its current status.
+    </p>
+  </div>
+
+  <form class="track-form" id="track-form">
+    <div class="field">
+      <label for="track-order-number">Order Number</label>
+      <input id="track-order-number" placeholder="CHM-20260905-1234" required>
+    </div>
+    <div class="field">
+      <label for="track-email">Email Address</label>
+      <input id="track-email" type="email" placeholder="you@example.com" required>
+    </div>
+    <button type="submit" class="btn btn-dark" style="width:100%; justify-content:center;">Track Order</button>
+    <p class="track-msg err" id="track-msg" style="display:none;"></p>
+  </form>
+
+  <div class="track-result" id="track-result">
+
+    <div class="track-steps" id="track-steps"></div>
+    <p class="track-cancelled-note" id="track-cancelled-note" style="display:none;">This order has been cancelled.</p>
+
+    <div class="track-order-summary">
+      <p class="serif" style="margin:0 0 4px;" id="track-order-number-label"></p>
+      <p class="small" style="color:var(--muted); margin:0 0 16px;" id="track-order-date"></p>
+      <div id="track-items"></div>
+      <div class="row total"><span>Total</span><span id="track-total"></span></div>
+      <p class="small" style="margin-top:16px; color:var(--muted);" id="track-shipping-summary"></p>
+    </div>
+
+  </div>
+</section>
+
+<div id="site-footer"></div>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/products.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+(function(){
+  var API_BASE = window.CHARM_API_BASE || 'http://localhost:4000/api';
+
+  // Orders that were cancelled skip straight to a dedicated note instead
+  // of showing as if they're progressing normally through production.
+  var FLOW = ['pending', 'paid', 'processing', 'shipped', 'completed'];
+  var FLOW_LABELS = {
+    pending: 'Order Placed', paid: 'Payment Confirmed', processing: 'In Production',
+    shipped: 'Shipped', completed: 'Delivered'
+  };
+  var fmtIDR = function(n){ return 'Rp' + Number(n || 0).toLocaleString('id-ID'); };
+
+  function renderSteps(status){
+    var container = document.getElementById('track-steps');
+    var cancelledNote = document.getElementById('track-cancelled-note');
+
+    if(status === 'cancelled'){
+      container.innerHTML = '';
+      cancelledNote.style.display = 'block';
+      return;
+    }
+    cancelledNote.style.display = 'none';
+
+    var currentIndex = FLOW.indexOf(status);
+    container.innerHTML = FLOW.map(function(s, i){
+      return '<div class="track-step' + (i <= currentIndex ? ' is-done' : '') + '">' +
+        '<div class="dot"></div><div class="label">' + FLOW_LABELS[s] + '</div></div>';
+    }).join('');
+  }
+
+  function renderOrder(o){
+    document.getElementById('track-order-number-label').textContent = 'Order #' + o.order_number;
+    var date = o.created_at ? new Date(o.created_at.replace(' ', 'T') + 'Z').toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' }) : '';
+    document.getElementById('track-order-date').textContent = 'Placed ' + date;
+
+    renderSteps(o.status);
+
+    document.getElementById('track-items').innerHTML = (o.items || []).map(function(i){
+      return '<div class="row"><span>' + i.name + ' × ' + i.qty + '</span><span>' + fmtIDR(i.price * i.qty) + '</span></div>';
+    }).join('');
+    document.getElementById('track-total').textContent = fmtIDR(o.total);
+
+    document.getElementById('track-shipping-summary').textContent =
+      (o.delivery_method_label || 'Standard delivery') + ' — ' + (o.payment_status === 'paid' ? 'Paid' : 'Payment pending');
+
+    document.getElementById('track-result').style.display = 'block';
+  }
+
+  document.getElementById('track-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var msg = document.getElementById('track-msg');
+    msg.style.display = 'none';
+    document.getElementById('track-result').style.display = 'none';
+
+    var orderNumber = document.getElementById('track-order-number').value.trim();
+    var email = document.getElementById('track-email').value.trim();
+    if(!orderNumber || !email) return;
+
+    fetch(API_BASE + '/orders/' + encodeURIComponent(orderNumber) + '?email=' + encodeURIComponent(email))
+      .then(function(res){ return res.json().then(function(data){ return { ok: res.ok, data: data }; }); })
+      .then(function(result){
+        if(!result.ok){
+          msg.textContent = (result.data && result.data.error) || 'Order not found. Check your order number and email address.';
+          msg.style.display = 'block';
+          return;
+        }
+        renderOrder(result.data.order);
+      })
+      .catch(function(){
+        msg.textContent = 'Could not reach the server right now — please try again in a moment.';
+        msg.style.display = 'block';
+      });
+  });
+})();
+</script>
+</body></html>
