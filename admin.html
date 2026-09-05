@@ -223,6 +223,15 @@ function renderOrders(){
   document.getElementById('orders-summary').textContent =
     `${orders.length} shown of ${ALL_ORDERS.length} total` + (countBits.length ? ' · ' + countBits.join(' · ') : '');
 }
+// Escapes HTML first (order data comes from customers, never trust it
+// raw), then turns any plain http(s) URL back into a clickable link —
+// used for shipping_address, which may contain a "Pinned location: ..."
+// Google Maps link appended by the checkout page's map picker.
+function escapeAndLinkify(text){
+  const esc = String(text || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return esc.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+}
 function orderRowHtml(o){
   const itemLabel = (o.items[0] ? o.items[0].name : '') + (o.items.length > 1 ? ' +' + (o.items.length - 1) : '');
   const date = new Date(o.created_at.replace(' ', 'T') + 'Z').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
@@ -249,7 +258,7 @@ function orderRowHtml(o){
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:6px 4px;">
         <div>
           <p class="small" style="margin:0 0 4px;"><strong>Shipping address</strong></p>
-          <p class="small" style="white-space:pre-wrap; margin:0 0 10px;">${o.shipping_address || '—'}</p>
+          <p class="small" style="white-space:pre-wrap; margin:0 0 10px;">${escapeAndLinkify(o.shipping_address)}</p>
           <p class="small" style="margin:0 0 4px;"><strong>Phone</strong></p>
           <p class="small" style="margin:0 0 10px;">${o.customer_phone || '—'}</p>
           <p class="small" style="margin:0 0 4px;"><strong>Country</strong></p>
