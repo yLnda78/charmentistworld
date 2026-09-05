@@ -914,6 +914,12 @@ router.post(
           ${finalDeliveryMethodLabel}
         </p>
 
+        <p>
+          <a href="${process.env.FRONTEND_URL || ''}/track-order.html?order=${encodeURIComponent(orderNumber)}&email=${encodeURIComponent(customerEmail)}">
+            Track your order status →
+          </a>
+        </p>
+
       `
 
     }).catch(
