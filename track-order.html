@@ -98,7 +98,16 @@
     pending: 'Order Placed', paid: 'Payment Confirmed', processing: 'In Production',
     shipped: 'Shipped', completed: 'Delivered'
   };
-  var fmtIDR = function(n){ return 'Rp' + Number(n || 0).toLocaleString('id-ID'); };
+  // Orders now store their total/item prices already converted into the
+  // customer's own billing currency (see backend routes/orders.js), so
+  // format using that currency's code instead of always assuming IDR.
+  var fmtMoney = function(n, currency){
+    try{
+      return new Intl.NumberFormat('en-US', { style:'currency', currency: currency || 'IDR', maximumFractionDigits: 2 }).format(Number(n) || 0);
+    }catch(e){
+      return (currency || 'IDR') + ' ' + Number(n || 0).toLocaleString('en-US');
+    }
+  };
 
   function renderSteps(status){
     var container = document.getElementById('track-steps');
@@ -126,9 +135,9 @@
     renderSteps(o.status);
 
     document.getElementById('track-items').innerHTML = (o.items || []).map(function(i){
-      return '<div class="row"><span>' + i.name + ' × ' + i.qty + '</span><span>' + fmtIDR(i.price * i.qty) + '</span></div>';
+      return '<div class="row"><span>' + i.name + ' × ' + i.qty + '</span><span>' + fmtMoney(i.price * i.qty, o.currency) + '</span></div>';
     }).join('');
-    document.getElementById('track-total').textContent = fmtIDR(o.total);
+    document.getElementById('track-total').textContent = fmtMoney(o.total, o.currency);
 
     document.getElementById('track-shipping-summary').textContent =
       (o.delivery_method_label || 'Standard delivery') + ' — ' + (o.payment_status === 'paid' ? 'Paid' : 'Payment pending');
