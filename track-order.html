@@ -136,6 +136,16 @@
     document.getElementById('track-result').style.display = 'block';
   }
 
+  // Pre-fill from a link that already has the order number + email
+  // (e.g. the "Track This Order" button right after checkout, or the
+  // link in the confirmation email) — and check automatically so the
+  // customer doesn't have to click twice.
+  var params = new URLSearchParams(window.location.search);
+  var prefillOrder = params.get('order');
+  var prefillEmail = params.get('email');
+  if(prefillOrder) document.getElementById('track-order-number').value = prefillOrder;
+  if(prefillEmail) document.getElementById('track-email').value = prefillEmail;
+
   document.getElementById('track-form').addEventListener('submit', function(e){
     e.preventDefault();
     var msg = document.getElementById('track-msg');
@@ -161,6 +171,10 @@
         msg.style.display = 'block';
       });
   });
+
+  if(prefillOrder && prefillEmail){
+    document.getElementById('track-form').requestSubmit();
+  }
 })();
 </script>
 </body></html>
