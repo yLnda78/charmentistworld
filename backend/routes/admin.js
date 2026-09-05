@@ -1,149 +1,350 @@
-// Admin endpoints — managing products and viewing orders from a small
-// internal dashboard (see /admin.html). Protected by requireAdmin below: a
-// simple shared-secret header, good enough while it's just you running the
-// shop. If you bring on staff, swap this for a proper `role` column on
-// users + normal login.
-const express = require('express');
-const midtransClient = require('midtrans-client');
-const db = require('../db');
-const { sendMail } = require('../utils/mail');
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin — CHARMENTIST</title>
+<style>
+  :root{ --line:#e4e0da; --muted:#8a8478; --text:#1c1a17; --paper:#faf8f5; --accent:#1c1a17; }
+  *{ box-sizing:border-box; }
+  body{ font-family:-apple-system,'Segoe UI',sans-serif; margin:0; background:var(--paper); color:var(--text); }
+  header{ display:flex; align-items:center; justify-content:space-between; padding:18px 28px; border-bottom:1px solid var(--line); background:#fff; }
+  header h1{ font-size:1.05rem; letter-spacing:.08em; margin:0; text-transform:uppercase; }
+  .wrap{ max-width:1100px; margin:0 auto; padding:28px; }
+  .tabs{ display:flex; gap:8px; margin-bottom:20px; }
+  .tab-btn{ padding:9px 18px; border:1px solid var(--line); background:#fff; cursor:pointer; font-size:.82rem; border-radius:3px; }
+  .tab-btn.is-active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .panel{ display:none; }
+  .panel.is-active{ display:block; }
+  table{ width:100%; border-collapse:collapse; background:#fff; font-size:.82rem; }
+  th, td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  th{ color:var(--muted); font-weight:600; text-transform:uppercase; font-size:.68rem; letter-spacing:.06em; }
+  input, select, textarea{ font-family:inherit; font-size:.82rem; padding:6px 8px; border:1px solid var(--line); border-radius:3px; background:#fff; }
+  input[type="number"]{ width:90px; }
+  button{ font-family:inherit; cursor:pointer; }
+  .btn{ padding:7px 14px; border:1px solid var(--accent); background:var(--accent); color:#fff; border-radius:3px; font-size:.78rem; }
+  .btn-outline{ background:#fff; color:var(--accent); }
+  .btn-danger{ background:#a33; border-color:#a33; }
+  .btn-sm{ padding:5px 10px; font-size:.72rem; }
+  .row-actions{ display:flex; gap:6px; }
+  .badge{ display:inline-block; padding:2px 8px; border-radius:20px; font-size:.68rem; text-transform:uppercase; letter-spacing:.04em; }
+  .badge-pending{ background:#f2e6c8; } .badge-paid{ background:#d6ead6; } .badge-processing{ background:#d3e3f2; }
+  .badge-shipped{ background:#d3e3f2; } .badge-completed{ background:#cdeccd; } .badge-cancelled{ background:#f0d3d3; }
+  .gate{ max-width:360px; margin:80px auto; padding:32px; background:#fff; border:1px solid var(--line); border-radius:6px; text-align:center; }
+  .gate input{ width:100%; margin:14px 0; padding:10px; }
+  .msg{ font-size:.78rem; margin-top:10px; }
+  .msg.err{ color:#a33; }
+  .msg.ok{ color:#2a7a2a; }
+  .add-form{ background:#fff; border:1px solid var(--line); padding:18px; margin-bottom:22px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; border-radius:4px; }
+  .add-form label{ display:block; font-size:.68rem; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+  .add-form .field{ display:flex; flex-direction:column; }
+  .add-form .field.span-3{ grid-column:span 3; }
+  .toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .small{ color:var(--muted); font-size:.75rem; }
+</style>
+</head>
+<body>
 
-const router = express.Router();
+<div id="gate" class="gate">
+  <h2 style="margin:0 0 6px;">CHARMENTIST Admin</h2>
+  <p class="small">Enter your admin key to continue. This is the ADMIN_KEY set in the backend's .env file.</p>
+  <input type="password" id="gate-key" placeholder="Admin key">
+  <button class="btn" id="gate-submit" style="width:100%;">Enter</button>
+  <p class="msg err" id="gate-msg"></p>
+</div>
 
-const core = new midtransClient.CoreApi({
-  isProduction: process.env.MIDTRANS_IS_PRODUCTION === 'true',
-  serverKey: process.env.MIDTRANS_SERVER_KEY,
-  clientKey: process.env.MIDTRANS_CLIENT_KEY
-});
+<div id="dashboard" style="display:none;">
+  <header>
+    <h1>CHARMENTIST — Admin</h1>
+    <button class="btn btn-outline btn-sm" id="logout-btn">Log out</button>
+  </header>
+  <div class="wrap">
+    <div class="tabs">
+      <button class="tab-btn is-active" data-tab="orders">Orders</button>
+      <button class="tab-btn" data-tab="products">Products</button>
+    </div>
 
-function requireAdmin(req, res, next){
-  const key = req.headers['x-admin-key'];
-  if(!process.env.ADMIN_KEY || key !== process.env.ADMIN_KEY){
-    return res.status(403).json({ error: 'Admin access required.' });
-  }
-  next();
+    <!-- ORDERS -->
+    <section class="panel is-active" data-panel="orders">
+      <div class="toolbar">
+        <div>
+          <label class="small">Filter by status: </label>
+          <select id="order-status-filter">
+            <option value="">All</option>
+            <option value="pending">Pending Payment</option>
+            <option value="paid">Paid</option>
+            <option value="processing">In Production</option>
+            <option value="shipped">Shipped</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div>
+          <label class="small">Search: </label>
+          <input id="order-search" type="text" placeholder="Order #, name, or email" style="padding:6px 8px;">
+        </div>
+        <button class="btn btn-outline btn-sm" id="orders-refresh">Refresh</button>
+      </div>
+      <p class="small" id="orders-summary" style="margin:6px 0 14px;"></p>
+      <table>
+        <thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Placed</th><th></th></tr></thead>
+        <tbody id="orders-tbody"></tbody>
+      </table>
+      <p class="small" id="orders-empty" style="display:none; padding:20px 0;">No orders match this filter.</p>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="panel" data-panel="products">
+      <div class="toolbar">
+        <h3 style="margin:0;">Add a new product</h3>
+        <button class="btn btn-outline btn-sm" id="products-refresh">Refresh</button>
+      </div>
+      <form class="add-form" id="add-product-form">
+        <div class="field"><label>ID (slug)</label><input id="np-id" required placeholder="frame-example-ring"></div>
+        <div class="field"><label>Name</label><input id="np-name" required></div>
+        <div class="field"><label>Price (IDR)</label><input id="np-price" type="number" min="0" required></div>
+        <div class="field"><label>Collection</label><input id="np-collection" placeholder="frame / axis / balance"></div>
+        <div class="field"><label>Type</label><input id="np-type" placeholder="ring / necklace / earrings / bracelet"></div>
+        <div class="field"><label>Stock</label><input id="np-stock" type="number" min="0" value="10"></div>
+        <div class="field span-3"><label>Material</label><input id="np-material" style="width:100%;" placeholder="18K White Gold, Diamond"></div>
+        <div class="field span-3"><label>Images (comma-separated filenames)</label><input id="np-images" style="width:100%;" placeholder="fr1.jpeg, fr1b.jpeg"></div>
+        <div class="field span-3"><label>Description</label><textarea id="np-desc" style="width:100%;" rows="2"></textarea></div>
+        <div class="field span-3"><button type="submit" class="btn">Add Product</button> <span class="msg" id="add-product-msg"></span></div>
+      </form>
+
+      <table>
+        <thead><tr><th>Product</th><th>Collection / Type</th><th>Price (IDR)</th><th>Stock</th><th>Active</th><th></th></tr></thead>
+        <tbody id="products-tbody"></tbody>
+      </table>
+    </section>
+  </div>
+</div>
+
+<script src="assets/js/config.js"></script>
+<script>
+const API_BASE = window.CHARM_API_BASE || 'http://localhost:4000/api';
+let ADMIN_KEY = sessionStorage.getItem('charm_admin_key') || '';
+
+async function adminFetch(path, options){
+  options = options || {};
+  const headers = Object.assign({ 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY }, options.headers || {});
+  const res = await fetch(API_BASE + path, Object.assign({}, options, { headers }));
+  const data = await res.json().catch(() => ({}));
+  if(!res.ok) throw new Error(data.error || 'Request failed.');
+  return data;
 }
-router.use(requireAdmin);
 
-// GET /api/admin/products — list everything, including deactivated items
-// (the public /api/products only returns active ones).
-router.get('/products', (req, res) => {
-  const rows = db.prepare('SELECT * FROM products ORDER BY created_at DESC').all();
-  res.json({ products: rows.map(r => ({ ...r, images: JSON.parse(r.images || '[]'), is_active: !!r.is_active })) });
-});
+const STATUS_LABELS = { pending:'Pending Payment', paid:'Paid', processing:'In Production', shipped:'Shipped', completed:'Completed', cancelled:'Cancelled' };
+const fmtIDR = n => 'Rp' + Number(n||0).toLocaleString('id-ID');
 
-// POST /api/admin/products — create a new product
-router.post('/products', (req, res) => {
-  const p = req.body;
-  if(!p.id || !p.name || !p.price){
-    return res.status(400).json({ error: 'id, name, and price are required.' });
-  }
-  db.prepare(`
-    INSERT INTO products (id, name, collection, type, price, description, material, gemstones, dimensions, weight, images, stock, is_active)
-    VALUES (@id, @name, @collection, @type, @price, @description, @material, @gemstones, @dimensions, @weight, @images, @stock, @is_active)
-  `).run({
-    id: p.id, name: p.name, collection: p.collection || null, type: p.type || null,
-    price: p.price, description: p.description || '',
-    material: p.material || '', gemstones: p.gemstones || '', dimensions: p.dimensions || '', weight: p.weight || '',
-    images: JSON.stringify(p.images || []),
-    stock: p.stock ?? 0, is_active: p.is_active === false ? 0 : 1
-  });
-  res.status(201).json({ ok: true });
-});
-
-// PATCH /api/admin/products/:id — update price, stock, description, active state, etc.
-router.patch('/products/:id', (req, res) => {
-  const existing = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
-  if(!existing) return res.status(404).json({ error: 'Product not found.' });
-
-  const fields = ['name', 'collection', 'type', 'price', 'description', 'material', 'gemstones', 'dimensions', 'weight', 'stock', 'is_active'];
-  const updates = [];
-  const params = {};
-  for(const f of fields){
-    if(req.body[f] !== undefined){ updates.push(`${f} = @${f}`); params[f] = req.body[f]; }
-  }
-  if(req.body.images !== undefined){ updates.push('images = @images'); params.images = JSON.stringify(req.body.images); }
-  if(updates.length === 0) return res.status(400).json({ error: 'Nothing to update.' });
-
-  params.id = req.params.id;
-  db.prepare(`UPDATE products SET ${updates.join(', ')}, updated_at = datetime('now') WHERE id = @id`).run(params);
-  res.json({ ok: true });
-});
-
-// DELETE /api/admin/products/:id — soft-delete (hides from storefront, keeps order history intact)
-router.delete('/products/:id', (req, res) => {
-  const info = db.prepare('UPDATE products SET is_active = 0 WHERE id = ?').run(req.params.id);
-  if(info.changes === 0) return res.status(404).json({ error: 'Product not found.' });
-  res.json({ ok: true });
-});
-
-// GET /api/admin/orders?status=pending
-router.get('/orders', (req, res) => {
-  let sql = 'SELECT * FROM orders';
-  const params = [];
-  if(req.query.status){ sql += ' WHERE status = ?'; params.push(req.query.status); }
-  sql += ' ORDER BY created_at DESC';
-  const rows = db.prepare(sql).all(...params);
-  res.json({ orders: rows.map(o => ({ ...o, items: JSON.parse(o.items_json) })) });
-});
-
-// PATCH /api/admin/orders/:id  { status }  — e.g. mark as shipped
-router.patch('/orders/:id', (req, res) => {
-  const { status } = req.body;
-  const allowed = ['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled'];
-  if(!allowed.includes(status)) return res.status(400).json({ error: `status must be one of: ${allowed.join(', ')}` });
-  const info = db.prepare("UPDATE orders SET status = ?, updated_at = datetime('now') WHERE id = ?").run(status, req.params.id);
-  if(info.changes === 0) return res.status(404).json({ error: 'Order not found.' });
-  res.json({ ok: true });
-});
-
-// POST /api/admin/orders/:id/cancel-refund
-// Cancels an unpaid Midtrans transaction, or refunds a paid one, then
-// marks the order accordingly. Midtrans only allows a straight "cancel"
-// before settlement and "refund" after — this picks the right call based
-// on the order's current payment_status so you don't have to know which.
-router.post('/orders/:id/cancel-refund', async (req, res) => {
-  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
-  if(!order) return res.status(404).json({ error: 'Order not found.' });
-
+// ---------- Gate ----------
+function showDashboard(){
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  loadOrders();
+  loadProducts();
+}
+async function tryKey(key){
+  ADMIN_KEY = key;
   try{
-    if(!order.midtrans_order_id){
-      // No real Midtrans transaction ever got created for this order
-      // (e.g. it was confirmed manually via WhatsApp/bank transfer, or
-      // the Midtrans call failed at checkout time) — nothing to
-      // cancel/refund on Midtrans's side, just update our own records.
-      db.prepare("UPDATE orders SET payment_status = 'failed', status = 'cancelled', updated_at = datetime('now') WHERE id = ?")
-        .run(order.id);
-    }else if(order.payment_status === 'paid'){
-      await core.transaction.refund(order.midtrans_order_id, {
-        reason: req.body.reason || 'Refunded by store admin'
-      });
-      db.prepare("UPDATE orders SET payment_status = 'refunded', status = 'cancelled', updated_at = datetime('now') WHERE id = ?")
-        .run(order.id);
-    }else{
-      await core.transaction.cancel(order.midtrans_order_id);
-      db.prepare("UPDATE orders SET payment_status = 'failed', status = 'cancelled', updated_at = datetime('now') WHERE id = ?")
-        .run(order.id);
-    }
-    // Orders decrement stock at creation time (see routes/orders.js) — put
-    // it back now that the sale isn't going through.
-    const items = JSON.parse(order.items_json);
-    const restock = db.transaction((items) => {
-      for(const i of items) db.prepare('UPDATE products SET stock = stock + ? WHERE id = ?').run(i.qty, i.id);
-    });
-    restock(items);
-
-    sendMail({
-      to: order.customer_email,
-      subject: `Order ${order.order_number} cancelled`,
-      html: `<p>Hi ${order.customer_name}, your order <strong>${order.order_number}</strong> has been cancelled${order.payment_status === 'refunded' ? ' and refunded' : ''}. Contact us if you have any questions.</p>`
-    }).catch(err => console.error('Cancellation email failed:', err.message));
-
-    res.json({ ok: true });
-  }catch(err){
-    console.error('Midtrans cancel/refund failed:', err.message);
-    res.status(502).json({ error: 'Midtrans could not process this — it may already be settled/cancelled. Check the Midtrans dashboard directly.' });
+    await adminFetch('/admin/orders'); // any admin call verifies the key
+    sessionStorage.setItem('charm_admin_key', key);
+    showDashboard();
+  }catch(e){
+    document.getElementById('gate-msg').textContent = 'Incorrect admin key, or the backend is unreachable at ' + API_BASE;
   }
+}
+document.getElementById('gate-submit').addEventListener('click', () => tryKey(document.getElementById('gate-key').value.trim()));
+document.getElementById('gate-key').addEventListener('keydown', e => { if(e.key === 'Enter') tryKey(e.target.value.trim()); });
+document.getElementById('logout-btn').addEventListener('click', () => {
+  sessionStorage.removeItem('charm_admin_key');
+  location.reload();
+});
+if(ADMIN_KEY) tryKey(ADMIN_KEY);
+
+// ---------- Tabs ----------
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('is-active', b === btn));
+    document.querySelectorAll('.panel').forEach(p => p.classList.toggle('is-active', p.dataset.panel === btn.dataset.tab));
+  });
 });
 
-module.exports = router;
+// ---------- Orders ----------
+let ALL_ORDERS = []; // cached from the last successful fetch, so search can filter instantly without re-hitting the API
+async function loadOrders(){
+  const status = document.getElementById('order-status-filter').value;
+  const tbody = document.getElementById('orders-tbody');
+  tbody.innerHTML = '<tr><td colspan="8" class="small">Loading…</td></tr>';
+  try{
+    const data = await adminFetch('/admin/orders' + (status ? '?status=' + status : ''));
+    ALL_ORDERS = data.orders || [];
+    renderOrders();
+  }catch(e){
+    tbody.innerHTML = '<tr><td colspan="8" class="small">Could not load orders: ' + e.message + '</td></tr>';
+  }
+}
+// Applies the search box (order #, customer name, or email) over whatever
+// the current status filter already returned, then redraws the table and
+// the small "N orders · N pending · N paid" summary line above it.
+function renderOrders(){
+  const q = (document.getElementById('order-search').value || '').trim().toLowerCase();
+  const orders = q
+    ? ALL_ORDERS.filter(o =>
+        (o.order_number || '').toLowerCase().includes(q) ||
+        (o.customer_name || '').toLowerCase().includes(q) ||
+        (o.customer_email || '').toLowerCase().includes(q))
+    : ALL_ORDERS;
+
+  const tbody = document.getElementById('orders-tbody');
+  document.getElementById('orders-empty').style.display = orders.length ? 'none' : 'block';
+  tbody.innerHTML = orders.map(orderRowHtml).join('');
+  tbody.querySelectorAll('[data-status-select]').forEach(sel => {
+    sel.addEventListener('change', () => updateOrderStatus(sel.dataset.statusSelect, sel.value));
+  });
+  tbody.querySelectorAll('[data-cancel-refund]').forEach(btn => {
+    btn.addEventListener('click', () => cancelRefundOrder(btn.dataset.cancelRefund, btn.dataset.paymentStatus));
+  });
+  tbody.querySelectorAll('[data-toggle-details]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const row = document.getElementById('details-row-' + btn.dataset.toggleDetails);
+      if(!row) return;
+      const showing = row.style.display !== 'none';
+      row.style.display = showing ? 'none' : 'table-row';
+      btn.textContent = showing ? 'Details' : 'Hide';
+    });
+  });
+
+  const counts = {};
+  ALL_ORDERS.forEach(o => { counts[o.status] = (counts[o.status] || 0) + 1; });
+  const countBits = Object.keys(STATUS_LABELS)
+    .filter(s => counts[s])
+    .map(s => `${counts[s]} ${STATUS_LABELS[s].toLowerCase()}`);
+  document.getElementById('orders-summary').textContent =
+    `${orders.length} shown of ${ALL_ORDERS.length} total` + (countBits.length ? ' · ' + countBits.join(' · ') : '');
+}
+function orderRowHtml(o){
+  const itemLabel = (o.items[0] ? o.items[0].name : '') + (o.items.length > 1 ? ' +' + (o.items.length - 1) : '');
+  const date = new Date(o.created_at.replace(' ', 'T') + 'Z').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  const canCancel = o.status !== 'cancelled' && o.status !== 'completed';
+  return `<tr>
+    <td>${o.order_number}</td>
+    <td>${o.customer_name}<br><span class="small">${o.customer_email}</span></td>
+    <td>${itemLabel}</td>
+    <td>${fmtIDR(o.total)}</td>
+    <td><span class="badge badge-${o.payment_status === 'paid' ? 'paid' : 'pending'}">${o.payment_status}</span></td>
+    <td>
+      <select data-status-select="${o.id}">
+        ${Object.keys(STATUS_LABELS).map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${STATUS_LABELS[s]}</option>`).join('')}
+      </select>
+    </td>
+    <td>${date}</td>
+    <td class="row-actions">
+      <button class="btn btn-outline btn-sm" data-toggle-details="${o.id}">Details</button>
+      ${canCancel ? `<button class="btn btn-danger btn-sm" data-cancel-refund="${o.id}" data-payment-status="${o.payment_status}">Cancel${o.payment_status==='paid' ? '/Refund' : ''}</button>` : ''}
+    </td>
+  </tr>
+  <tr class="details-row" id="details-row-${o.id}" style="display:none;">
+    <td colspan="8" style="background:#faf8f5;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:6px 4px;">
+        <div>
+          <p class="small" style="margin:0 0 4px;"><strong>Shipping address</strong></p>
+          <p class="small" style="white-space:pre-wrap; margin:0 0 10px;">${o.shipping_address || '—'}</p>
+          <p class="small" style="margin:0 0 4px;"><strong>Phone</strong></p>
+          <p class="small" style="margin:0 0 10px;">${o.customer_phone || '—'}</p>
+          <p class="small" style="margin:0 0 4px;"><strong>Country</strong></p>
+          <p class="small" style="margin:0;">${o.country || '—'}</p>
+        </div>
+        <div>
+          <p class="small" style="margin:0 0 4px;"><strong>Payment method</strong></p>
+          <p class="small" style="margin:0 0 10px;">${o.payment_method_label || o.payment_method || '—'}${o.va_bank ? ` — VA ${String(o.va_bank).toUpperCase()} ${o.va_number || ''}` : ''}</p>
+          <p class="small" style="margin:0 0 4px;"><strong>Delivery method</strong></p>
+          <p class="small" style="margin:0 0 10px;">${o.delivery_method_label || o.delivery_method || '—'}</p>
+          <p class="small" style="margin:0 0 4px;"><strong>Items</strong></p>
+          <p class="small" style="margin:0;">${o.items.map(i => `${i.name} × ${i.qty} (${fmtIDR(i.price)})`).join('<br>')}</p>
+        </div>
+      </div>
+    </td>
+  </tr>`;
+}
+async function updateOrderStatus(orderId, status){
+  try{ await adminFetch('/admin/orders/' + orderId, { method:'PATCH', body: JSON.stringify({ status }) }); }
+  catch(e){ alert('Could not update status: ' + e.message); loadOrders(); }
+}
+async function cancelRefundOrder(orderId, paymentStatus){
+  const verb = paymentStatus === 'paid' ? 'cancel AND refund' : 'cancel';
+  if(!confirm(`Are you sure you want to ${verb} this order? This cannot be undone.`)) return;
+  try{
+    await adminFetch('/admin/orders/' + orderId + '/cancel-refund', { method:'POST', body: JSON.stringify({}) });
+    loadOrders();
+  }catch(e){ alert('Could not process: ' + e.message); }
+}
+document.getElementById('order-status-filter').addEventListener('change', loadOrders);
+document.getElementById('orders-refresh').addEventListener('click', loadOrders);
+document.getElementById('order-search').addEventListener('input', renderOrders);
+
+// ---------- Products ----------
+async function loadProducts(){
+  const tbody = document.getElementById('products-tbody');
+  tbody.innerHTML = '<tr><td colspan="5" class="small">Loading…</td></tr>';
+  try{
+    const data = await adminFetch('/admin/products');
+    tbody.innerHTML = (data.products || []).map(productRowHtml).join('');
+    tbody.querySelectorAll('[data-save-product]').forEach(btn => {
+      btn.addEventListener('click', () => saveProduct(btn.dataset.saveProduct));
+    });
+    tbody.querySelectorAll('[data-toggle-active]').forEach(cb => {
+      cb.addEventListener('change', () => adminFetch('/admin/products/' + cb.dataset.toggleActive, { method:'PATCH', body: JSON.stringify({ is_active: cb.checked }) }));
+    });
+  }catch(e){
+    tbody.innerHTML = '<tr><td colspan="5" class="small">Could not load products: ' + e.message + '</td></tr>';
+  }
+}
+function productRowHtml(p){
+  return `<tr>
+    <td>${p.name}<br><span class="small">${p.id}</span></td>
+    <td>${p.collection || '—'} / ${p.type || '—'}</td>
+    <td><input type="number" min="0" value="${p.price}" data-price="${p.id}" style="width:120px;"></td>
+    <td><input type="number" min="0" value="${p.stock}" data-stock="${p.id}"></td>
+    <td><input type="checkbox" data-toggle-active="${p.id}" ${p.is_active ? 'checked' : ''}></td>
+    <td><button class="btn btn-sm" data-save-product="${p.id}">Save</button></td>
+  </tr>`;
+}
+async function saveProduct(id){
+  const price = document.querySelector(`[data-price="${id}"]`).value;
+  const stock = document.querySelector(`[data-stock="${id}"]`).value;
+  try{
+    await adminFetch('/admin/products/' + id, { method:'PATCH', body: JSON.stringify({ price: Number(price), stock: Number(stock) }) });
+  }catch(e){ alert('Could not save: ' + e.message); }
+}
+document.getElementById('products-refresh').addEventListener('click', loadProducts);
+
+document.getElementById('add-product-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('add-product-msg');
+  const images = document.getElementById('np-images').value.split(',').map(s => s.trim()).filter(Boolean);
+  try{
+    await adminFetch('/admin/products', {
+      method: 'POST',
+      body: JSON.stringify({
+        id: document.getElementById('np-id').value.trim(),
+        name: document.getElementById('np-name').value.trim(),
+        price: Number(document.getElementById('np-price').value),
+        collection: document.getElementById('np-collection').value.trim(),
+        type: document.getElementById('np-type').value.trim(),
+        stock: Number(document.getElementById('np-stock').value || 0),
+        material: document.getElementById('np-material').value.trim(),
+        description: document.getElementById('np-desc').value.trim(),
+        images
+      })
+    });
+    msg.textContent = 'Product added.'; msg.className = 'msg ok';
+    e.target.reset();
+    loadProducts();
+  }catch(err){
+    msg.textContent = err.message; msg.className = 'msg err';
+  }
+});
+</script>
+</body>
+</html>
