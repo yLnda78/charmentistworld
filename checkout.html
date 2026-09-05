@@ -1809,7 +1809,63 @@ function renderPaymentOptions(){
       )
       .join('') +
 
-    `</div>`;
+    `</div>` +
+
+    (
+      selectedPayment === 'bank-transfer-domestic'
+        ? renderBankPickerHtml()
+        : ''
+    );
+
+}
+
+
+
+/* ============================================================
+   BANK PICKER (Virtual Account)
+   ------------------------------------------------------------
+   Only shown for the "Bank Transfer" payment method. The backend
+   requires one of these exact codes as bankCode — see VA_BANKS in
+   backend/routes/orders.js. Keep this list in sync with that array.
+============================================================ */
+
+const VA_BANK_OPTIONS = [
+  { code:'bca', label:'BCA Virtual Account' },
+  { code:'bni', label:'BNI Virtual Account' },
+  { code:'bri', label:'BRI Virtual Account' },
+  { code:'permata', label:'Permata Virtual Account' }
+];
+
+function renderBankPickerHtml(){
+
+  return (
+    `<div class="small" style="margin:14px 0 8px; opacity:.7;">
+      Choose your bank for the Virtual Account:
+    </div>` +
+    `<div class="pay-list">` +
+    VA_BANK_OPTIONS
+      .map(
+        b => `
+          <div
+            class="pay-row${
+              b.code === selectedBank
+                ? ' is-active'
+                : ''
+            }"
+            data-bank="${b.code}"
+          >
+            <div class="pay-radio"></div>
+            <div>
+              <div class="pay-row-label">
+                <strong>${b.label}</strong>
+              </div>
+            </div>
+          </div>
+        `
+      )
+      .join('') +
+    `</div>`
+  );
 
 }
 
@@ -2320,12 +2376,14 @@ function validateStep(step){
 
     }
 
-    // NOTE: there is currently no bank-picker UI rendered anywhere for
-    // "Bank Transfer" (no data-bank elements exist), so selectedBank can
-    // never actually be set. The old check below required it anyway,
-    // which meant choosing "Bank Transfer" permanently stuck the
-    // customer at this step with no way to satisfy the requirement.
-    // Dropped until a real bank list is built.
+    if(
+      selectedPayment === 'bank-transfer-domestic' &&
+      !selectedBank
+    ){
+
+      return 'Please choose a bank for the Virtual Account transfer.';
+
+    }
 
   }
 
