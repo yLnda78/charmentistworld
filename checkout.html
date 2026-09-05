@@ -753,6 +753,15 @@
 
       <a
         class="btn btn-outline"
+        id="checkout-track-link"
+        href="#"
+      >
+        Track This Order
+      </a>
+
+
+      <a
+        class="btn btn-outline"
         href="index.html#collections"
       >
         Continue Shopping
@@ -3133,7 +3142,8 @@ function buildWhatsAppMessage(
 
 function showOrderSuccess(
   orderNumber,
-  waUrl
+  waUrl,
+  customerEmail
 ){
 
   document
@@ -3157,6 +3167,24 @@ function showOrderSuccess(
 
     waLink.href =
       waUrl;
+
+  }
+
+
+  const trackLink =
+    document.getElementById(
+      'checkout-track-link'
+    );
+
+
+  if(trackLink){
+
+    trackLink.href =
+      `track-order.html?order=${
+        encodeURIComponent(orderNumber)
+      }&email=${
+        encodeURIComponent(customerEmail || '')
+      }`;
 
   }
 
@@ -3332,7 +3360,8 @@ async function handlePlaceOrder(){
 
     showOrderSuccess(
       order.orderNumber,
-      waUrl
+      waUrl,
+      order.customerEmail
     );
 
 
