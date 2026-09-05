@@ -8,6 +8,7 @@
 <title>Checkout — CHARMENTIST</title>
 
 <link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 
 
@@ -427,6 +428,53 @@
 
 
 
+  <div class="field">
+
+    <label>
+      Pin Your Exact Location
+      <span class="small" style="opacity:.65; font-weight:400;">(optional, but helps our courier find you)</span>
+    </label>
+
+    <div
+      style="
+        display:flex;
+        gap:10px;
+        margin-bottom:10px;
+      "
+    >
+
+      <button
+        type="button"
+        class="btn btn-outline btn-sm"
+        id="map-locate-btn"
+        style="flex:1; justify-content:center;"
+      >
+        📍 Use My Current Location
+      </button>
+
+    </div>
+
+    <div
+      id="checkout-map"
+      style="
+        height:220px;
+        border:1px solid var(--line, #e4e0da);
+        border-radius:4px;
+      "
+    ></div>
+
+    <p
+      class="small"
+      id="map-status"
+      style="opacity:.65; margin-top:8px;"
+    >
+      Drag the pin to your exact address, or tap the button above.
+    </p>
+
+  </div>
+
+
+
   <div class="eyebrow mt-40">
     Delivery Options
   </div>
@@ -726,6 +774,7 @@
      SITE JS
 ========================================================= -->
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/products.js"></script>
 <script src="assets/js/auth.js"></script>
@@ -1296,6 +1345,100 @@ let selectedDelivery = null;
 let selectedPayment = null;
 
 let selectedBank = null;
+
+let selectedMapLink = null;
+
+let checkoutMapInstance = null;
+let checkoutMapMarker = null;
+
+
+
+/* ============================================================
+   ADDRESS MAP PICKER
+   ------------------------------------------------------------
+   Uses Leaflet + OpenStreetMap (free, no API key needed) so the
+   customer can drop/drag a pin on their real location. We only
+   ever send a plain Google Maps link built from the coordinates —
+   nothing else changes about how shippingAddress is stored.
+============================================================ */
+
+function setMapPin(lat, lng, statusText){
+
+  selectedMapLink =
+    `https://www.google.com/maps?q=${lat.toFixed(6)},${lng.toFixed(6)}`;
+
+  document.getElementById('map-status').textContent =
+    statusText ||
+    `Pinned at ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+
+}
+
+function initCheckoutMap(){
+
+  const container = document.getElementById('checkout-map');
+  if(!container || typeof L === 'undefined') return;
+
+  // Default center: Jakarta, Indonesia — just a reasonable starting
+  // view before the customer locates/drags their own pin.
+  const defaultLat = -6.2088;
+  const defaultLng = 106.8456;
+
+  if(!checkoutMapInstance){
+
+    checkoutMapInstance = L.map('checkout-map').setView([defaultLat, defaultLng], 11);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(checkoutMapInstance);
+
+    checkoutMapMarker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(checkoutMapInstance);
+
+    checkoutMapMarker.on('dragend', () => {
+      const pos = checkoutMapMarker.getLatLng();
+      setMapPin(pos.lat, pos.lng);
+    });
+
+    checkoutMapInstance.on('click', e => {
+      checkoutMapMarker.setLatLng(e.latlng);
+      setMapPin(e.latlng.lat, e.latlng.lng);
+    });
+
+  }else{
+
+    // Panel was hidden (display:none) when the map first initialized,
+    // so Leaflet's internal size calculation is stale — fix it now
+    // that the container is visible again.
+    setTimeout(() => checkoutMapInstance.invalidateSize(), 50);
+
+  }
+
+}
+
+document.getElementById('map-locate-btn').addEventListener('click', () => {
+
+  if(!navigator.geolocation){
+    document.getElementById('map-status').textContent =
+      'Location services are not available in this browser — please drag the pin manually.';
+    return;
+  }
+
+  document.getElementById('map-status').textContent = 'Locating…';
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const { latitude, longitude } = pos.coords;
+      checkoutMapInstance.setView([latitude, longitude], 16);
+      checkoutMapMarker.setLatLng([latitude, longitude]);
+      setMapPin(latitude, longitude);
+    },
+    () => {
+      document.getElementById('map-status').textContent =
+        'Could not get your location — please drag the pin manually instead.';
+    }
+  );
+
+});
 
 
 
@@ -2197,6 +2340,10 @@ function goToStep(step){
     );
 
 
+  if(step === '2'){
+    initCheckoutMap();
+  }
+
   if(step === '3'){
     renderPaymentOptions();
   }
@@ -2685,35 +2832,47 @@ function buildOrder(){
 
     shippingAddress:
 
-      [
+      (() => {
 
-        document
-          .getElementById('f-address')
-          .value
-          .trim(),
+        const base =
+          [
 
-        document
-          .getElementById('f-city')
-          .value
-          .trim(),
+            document
+              .getElementById('f-address')
+              .value
+              .trim(),
 
-        document
-          .getElementById('f-province')
-          .value
-          .trim(),
+            document
+              .getElementById('f-city')
+              .value
+              .trim(),
 
-        document
-          .getElementById('f-postal')
-          .value
-          .trim(),
+            document
+              .getElementById('f-province')
+              .value
+              .trim(),
 
-        document
-          .getElementById('f-country')
-          .value
+            document
+              .getElementById('f-postal')
+              .value
+              .trim(),
 
-      ]
-      .filter(Boolean)
-      .join(', '),
+            document
+              .getElementById('f-country')
+              .value
+
+          ]
+          .filter(Boolean)
+          .join(', ');
+
+        // Append the pinned-location link (if the customer used the
+        // map) so it rides along inside the same plain-text field —
+        // no backend/database changes needed to carry it through.
+        return selectedMapLink
+          ? `${base}\nPinned location: ${selectedMapLink}`
+          : base;
+
+      })(),
 
 
     deliveryMethod:
