@@ -76,7 +76,7 @@ function renderCart(){
         <h4 class="serif">${p.name}</h4>
         <p class="small">${p.material}</p>
         ${size ? `<p class="small">Ring Size: ${size}</p>` : ''}
-        <p class="small" style="color:var(--muted); margin-top:4px;">Made to order · Ships in 7–8 weeks</p>
+        <p class="small" style="color:var(--muted); margin-top:4px;">Made to order · Ships in ${p.productionTime || '7–8 weeks'}</p>
         <div class="qty-stepper">
           <button data-qty-minus>−</button>
           <span>${qty}</span>
