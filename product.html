@@ -1,7 +1,16 @@
 <!doctype html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title id="page-title">Piece — CHARMENTIST</title><link rel="stylesheet" href="assets/css/style.css"></head>
+<title id="page-title">Piece — CHARMENTIST</title>
+<meta name="description" content="A CHARMENTIST fine jewelry piece — architectural design in 18K gold, set with diamonds and colored gemstones.">
+<link rel="canonical" href="https://ylnda78.github.io/charmentistworld/product.html">
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="CHARMENTIST">
+<meta property="og:title" content="Piece — CHARMENTIST">
+<meta property="og:description" content="A CHARMENTIST fine jewelry piece — architectural design in 18K gold, set with diamonds and colored gemstones.">
+<meta property="og:url" content="https://ylnda78.github.io/charmentistworld/product.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/css/style.css"></head>
 <body data-page="product.html">
 <div id="site-header" data-variant="light"></div>
 
@@ -35,14 +44,14 @@
 
     <div class="mto-banner"><strong>Made to Order.</strong> Ships in <span id="p-mto-weeks">7–8 weeks</span>. Every piece is hand-finished in-house once your order is placed, so please allow approximately <span id="p-mto-weeks-2">7–8 weeks</span> for production before dispatch.</div>
   </div>
-  <img id="p-hero-img" src="https://images.unsplash.com/photo-1694062045776-f48d9b6de57e?auto=format&fit=crop&w=700&h=560&q=80">
+  <img id="p-hero-img" src="https://images.unsplash.com/photo-1694062045776-f48d9b6de57e?auto=format&fit=crop&w=700&h=560&q=80" alt="CHARMENTIST fine jewelry piece">
 </section>
 
 <section class="wrap thumb-row" id="p-thumb-row" style="padding:0 6vw 60px;">
 </section>
 
 <section class="grid-2">
-  <img src="ARC.png">
+  <img src="ARC.png" alt="Architectural sketch inspiration behind CHARMENTIST's jewelry design">
   <div class="section-pad">
     <div class="eyebrow">Design Story</div>
     <h2 class="section-title">Architecture Made Wearable</h2>
@@ -78,6 +87,7 @@
 <div id="site-footer"></div>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/products.js"></script>
+<script src="assets/js/seo.js"></script>
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/store.js"></script>
 <script src="assets/js/main.js"></script>
@@ -105,6 +115,27 @@
     document.getElementById('p-material').textContent = p.material;
     document.getElementById('p-price').textContent = CharmData.formatPrice(p.price);
     document.getElementById('p-hero-img').src = p.img;
+    document.getElementById('p-hero-img').alt = p.name + ' — ' + p.material;
+
+    // Per-product SEO: real title/description/canonical/OG tags and
+    // Product + BreadcrumbList JSON-LD, built from this exact product
+    // object so structured data always matches what's on screen.
+    if(window.CharmSEO){
+      var pageTitle = p.name + ' | ' + (col ? col.name : 'Collection') + ' Collection — CHARMENTIST';
+      var pageDesc = p.desc + ' ' + p.material + '.';
+      CharmSEO.setMeta({
+        title: pageTitle,
+        description: pageDesc,
+        path: 'product.html?id=' + p.id,
+        image: p.img
+      });
+      CharmSEO.setBreadcrumbs([
+        { name:'Home', path:'index.html' },
+        { name: col ? col.name : 'Collection', path: col ? col.page : 'index.html' },
+        { name: p.name, path: 'product.html?id=' + p.id }
+      ]);
+      CharmSEO.setProductSchema(p, col ? col.name : null);
+    }
 
     // Sold-out state: show the banner, disable the buy button, and swap
     // its label so a shopper never lands on a purchase flow for a piece
@@ -120,7 +151,7 @@
     const heroImg = document.getElementById('p-hero-img');
     const gallery = (p.gallery && p.gallery.length) ? p.gallery : [p.img];
     const thumbRow = document.getElementById('p-thumb-row');
-    thumbRow.innerHTML = gallery.map((src, i) => `<img src="${src}" class="${i === 0 ? 'active' : ''}">`).join('');
+    thumbRow.innerHTML = gallery.map((src, i) => `<img src="${src}" alt="${p.name} — view ${i + 1}" class="${i === 0 ? 'active' : ''}">`).join('');
     thumbRow.querySelectorAll('img').forEach(thumb => {
       thumb.addEventListener('click', () => {
         heroImg.src = thumb.src;
@@ -175,7 +206,7 @@
     relWrap.innerHTML = related.map(r => { const rSoldOut = CharmData.isSoldOut(r); return `
       <div class="tile${rSoldOut ? ' is-sold-out' : ''}" data-product-id="${r.id}">
         <a class="tile-link-wrap" href="product.html?id=${r.id}">
-          <div class="tile-img"><img src="${r.img}"></div>
+          <div class="tile-img"><img src="${r.img}" alt="${r.name} — ${r.material}"></div>
           <h4>${r.name}</h4>
           <p class="price">${CharmData.formatPrice(r.price)}</p>
           <p class="small tile-meta">${CharmData.tileMeta(r)}</p>
