@@ -15,7 +15,7 @@ function signToken(user){
   });
 }
 function publicUser(user){
-  return { id: user.id, email: user.email, name: user.name, createdAt: user.created_at };
+  return { id: user.id, email: user.email, name: user.name, createdAt: user.created_at, newsletterOptIn: !!user.newsletter_opt_in };
 }
 
 // GET /api/auth/exists?email=...
@@ -82,6 +82,21 @@ router.get('/me', requireAuth, (req, res) => {
 router.patch('/me', requireAuth, body('name').trim().notEmpty(), (req, res) => {
   db.prepare('UPDATE users SET name = ? WHERE id = ?').run(req.body.name, req.user.id);
   res.json({ ok: true });
+});
+
+// PATCH /api/auth/newsletter  { optIn }
+// Persists the "News & Offers" toggle on the user's account row instead
+// of just the browser's localStorage. This is still only a stored
+// preference flag — actually sending campaign emails to everyone with
+// optIn=true requires a mailing-list/campaign tool on top of this
+// (utils/mail.js here only sends one-off transactional emails like order
+// confirmations). Wiring that up is a separate step once you pick a
+// provider (Mailchimp, Brevo, etc.) — this endpoint just makes sure the
+// customer's choice is recorded truthfully instead of doing nothing.
+router.patch('/newsletter', requireAuth, (req, res) => {
+  const optIn = !!req.body.optIn;
+  db.prepare('UPDATE users SET newsletter_opt_in = ? WHERE id = ?').run(optIn ? 1 : 0, req.user.id);
+  res.json({ ok: true, newsletterOptIn: optIn });
 });
 
 // POST /api/auth/change-password  { oldPassword, newPassword }
