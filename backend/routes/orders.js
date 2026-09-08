@@ -1055,15 +1055,21 @@ router.get(
   requireAuth,
   (req, res) => {
 
+    // Matches on user_id (orders placed while logged in, or linked at
+    // creation time — see POST / above) OR on the account's own email
+    // (older guest-checkout orders placed before this fix, which were
+    // saved with user_id = NULL). We trust req.user.email here because
+    // it comes from a verified JWT, not from user input.
     const rows =
       db.prepare(
         `
         SELECT *
         FROM orders
         WHERE user_id = ?
+           OR LOWER(customer_email) = LOWER(?)
         ORDER BY created_at DESC
         `
-      ).all(req.user.id);
+      ).all(req.user.id, req.user.email);
 
 
     res.json({
