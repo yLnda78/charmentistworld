@@ -126,5 +126,18 @@ const CharmAuth = (function(){
     }
   }
 
-  return { emailExists, register, login, logout, currentUser, isLoggedIn, updateName, changePassword, getToken, apiFetch };
+  // Persists the newsletter opt-in on the server (see backend
+  // routes/auth.js) instead of only in localStorage.
+  async function updateNewsletter(optIn){
+    try{
+      const data = await apiFetch('/auth/newsletter', { method: 'PATCH', body: JSON.stringify({ optIn: !!optIn }) });
+      const user = currentUser();
+      if(user){ user.newsletterOptIn = !!data.newsletterOptIn; setSession(getToken(), user); }
+      return { ok: true };
+    }catch(e){
+      return { ok: false, error: e.networkError ? e.error : (e.error || 'Could not update newsletter preference.') };
+    }
+  }
+
+  return { emailExists, register, login, logout, currentUser, isLoggedIn, updateName, changePassword, updateNewsletter, getToken, apiFetch };
 })();
