@@ -499,17 +499,33 @@
   });
 
   // ---------------- Newsletter preference ----------------
-  var NEWS_KEY = 'charm_newsletter_pref';
-  function readNewsletterAll(){ try{ return JSON.parse(localStorage.getItem(NEWS_KEY) || '{}'); }catch(e){ return {}; } }
+  // Now backed by the server (see assets/js/auth.js updateNewsletter /
+  // backend routes/auth.js) instead of localStorage, so the toggle
+  // reflects a real, account-wide setting rather than something that
+  // only ever lived in this one browser and never reached the store.
   var newsToggle = document.getElementById('newsletter-toggle');
-  newsToggle.checked = !!readNewsletterAll()[user.email];
+  var newsNote = document.getElementById('newsletter-note');
+  newsToggle.checked = !!user.newsletterOptIn;
+  // Refresh from the server in case the cached profile predates this
+  // field, or was changed from another device.
+  CharmAuth.apiFetch('/auth/me').then(function(data){
+    if(data && data.user){ newsToggle.checked = !!data.user.newsletterOptIn; }
+  }).catch(function(){ /* keep cached value if this fails */ });
   newsToggle.addEventListener('change', function(){
-    var all = readNewsletterAll();
-    all[user.email] = newsToggle.checked;
-    localStorage.setItem(NEWS_KEY, JSON.stringify(all));
-    var note = document.getElementById('newsletter-note');
-    note.textContent = 'Preference saved.';
-    setTimeout(function(){ note.textContent = ''; }, 2000);
+    var checked = newsToggle.checked;
+    newsToggle.disabled = true;
+    CharmAuth.updateNewsletter(checked).then(function(result){
+      newsToggle.disabled = false;
+      if(!result.ok){
+        newsToggle.checked = !checked; // revert on failure
+        newsNote.textContent = result.error || 'Could not save preference.';
+        newsNote.className = 'save-note is-error';
+        return;
+      }
+      newsNote.textContent = 'Preference saved.';
+      newsNote.className = 'save-note is-success';
+      setTimeout(function(){ newsNote.textContent = ''; }, 2000);
+    });
   });
 
   // ---------------- Account settings ----------------
