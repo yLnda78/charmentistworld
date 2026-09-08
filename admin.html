@@ -130,7 +130,11 @@ async function adminFetch(path, options){
   const headers = Object.assign({ 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY }, options.headers || {});
   const res = await fetch(API_BASE + path, Object.assign({}, options, { headers }));
   const data = await res.json().catch(() => ({}));
-  if(!res.ok) throw new Error(data.error || 'Request failed.');
+  if(!res.ok){
+    const err = new Error(data.error || 'Request failed.');
+    err.code = data.code;
+    throw err;
+  }
   return data;
 }
 
@@ -286,8 +290,29 @@ function orderRowHtml(o){
   </tr>`;
 }
 async function updateOrderStatus(orderId, status){
-  try{ await adminFetch('/admin/orders/' + orderId, { method:'PATCH', body: JSON.stringify({ status }) }); }
-  catch(e){ alert('Could not update status: ' + e.message); loadOrders(); }
+  try{
+    await adminFetch('/admin/orders/' + orderId, { method:'PATCH', body: JSON.stringify({ status }) });
+    loadOrders();
+    return;
+  }catch(e){
+    if(e.code === 'PAYMENT_NOT_CONFIRMED'){
+      const alsoMarkPaid = confirm(
+        'This order is still marked UNPAID.\n\n' +
+        'Only continue if you already received the payment some other way ' +
+        '(cash, bank transfer confirmed manually, etc).\n\n' +
+        'Mark it as PAID and set status to "' + (STATUS_LABELS[status] || status) + '"?'
+      );
+      if(alsoMarkPaid){
+        try{
+          await adminFetch('/admin/orders/' + orderId, { method:'PATCH', body: JSON.stringify({ status, markPaid: true }) });
+        }catch(e2){ alert('Could not update status: ' + e2.message); }
+      }
+      loadOrders();
+      return;
+    }
+    alert('Could not update status: ' + e.message);
+    loadOrders();
+  }
 }
 async function cancelRefundOrder(orderId, paymentStatus){
   const verb = paymentStatus === 'paid' ? 'cancel AND refund' : 'cancel';
