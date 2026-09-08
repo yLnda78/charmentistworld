@@ -331,6 +331,38 @@ for (const col of orderColumns) {
 
 
 /* ============================================================
+   USERS MIGRATION
+   ------------------------------------------------------------
+   Newsletter preference used to live only in the browser's
+   localStorage (never reached the server, so it was purely
+   cosmetic). Storing it on the user row makes it a real,
+   account-wide setting.
+============================================================ */
+
+const userColumns = [
+
+  "newsletter_opt_in INTEGER NOT NULL DEFAULT 0"
+
+];
+
+for (const col of userColumns) {
+
+  try {
+
+    db.exec(
+      `ALTER TABLE users ADD COLUMN ${col}`
+    );
+
+  } catch (e) {
+
+    // Column already exists.
+
+  }
+
+}
+
+
+/* ============================================================
    EXPORT
 ============================================================ */
 
