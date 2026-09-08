@@ -87,13 +87,36 @@ router.get('/orders', (req, res) => {
   res.json({ orders: rows.map(o => ({ ...o, items: JSON.parse(o.items_json) })) });
 });
 
-// PATCH /api/admin/orders/:id  { status }  — e.g. mark as shipped
+// PATCH /api/admin/orders/:id  { status, markPaid? }  — e.g. mark as shipped
+//
+// Guard: moving an order into a "fulfillment" status (processing/shipped/
+// completed) while payment_status isn't 'paid' used to be silently
+// allowed — that's how an order could show "Completed" in the Status
+// column while the Payment column still read "UNPAID". Now that's
+// blocked unless the admin explicitly confirms via markPaid:true (for
+// manual payments — cash, bank transfer confirmed by WhatsApp, etc. —
+// that never went through Midtrans).
 router.patch('/orders/:id', (req, res) => {
-  const { status } = req.body;
+  const { status, markPaid } = req.body;
   const allowed = ['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled'];
   if(!allowed.includes(status)) return res.status(400).json({ error: `status must be one of: ${allowed.join(', ')}` });
-  const info = db.prepare("UPDATE orders SET status = ?, updated_at = datetime('now') WHERE id = ?").run(status, req.params.id);
-  if(info.changes === 0) return res.status(404).json({ error: 'Order not found.' });
+
+  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
+  if(!order) return res.status(404).json({ error: 'Order not found.' });
+
+  const requiresPayment = ['processing', 'shipped', 'completed'];
+  if(requiresPayment.includes(status) && order.payment_status !== 'paid' && !markPaid){
+    return res.status(409).json({
+      error: 'This order is still UNPAID. Confirm payment was received before moving it to this status.',
+      code: 'PAYMENT_NOT_CONFIRMED'
+    });
+  }
+
+  if(markPaid && order.payment_status !== 'paid'){
+    db.prepare("UPDATE orders SET payment_status = 'paid' WHERE id = ?").run(order.id);
+  }
+
+  db.prepare("UPDATE orders SET status = ?, updated_at = datetime('now') WHERE id = ?").run(status, req.params.id);
   res.json({ ok: true });
 });
 
