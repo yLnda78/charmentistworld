@@ -620,9 +620,15 @@ router.post(
 
         orderNumber,
 
+         // If they're logged in, use that account. Otherwise (guest
+        // checkout), still link the order to an existing account if one
+        // is registered under the same email — previously this stayed
+        // NULL for every guest checkout, which meant it could never show
+        // up under "My Orders" even after the customer logged in with
+        // that exact email (GET /orders below matches on user_id).
         req.user
           ? req.user.id
-          : null,
+          : ((db.prepare('SELECT id FROM users WHERE email = ?').get(customerEmail.trim().toLowerCase()) || {}).id || null),
 
         customerName,
         customerEmail,
