@@ -151,7 +151,6 @@ const CharmData = {
     if(window.CharmCurrency) return window.CharmCurrency.format(n);
     return '$' + Number(n).toLocaleString('en-US');
   },
-  },
   // Small meta line shown under a product's price on tile cards (collection
   // grids, search, wishlist, related pieces) — BEFORE a shopper clicks into
   // the product page. Shows both the production estimate and the pcs target.
