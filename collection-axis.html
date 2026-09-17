@@ -204,6 +204,8 @@
     ]);
     CharmSEO.setItemListSchema(pieces, 'Axis Language Collection');
   }
+  if(window.CharmCurrency) CharmCurrency.convertStaticPrices();
+  document.addEventListener('charm:currency-ready', function(){ if(window.CharmCurrency) CharmCurrency.convertStaticPrices(); });
 </script>
-</body>
-</html>
+  
+</body></html>
