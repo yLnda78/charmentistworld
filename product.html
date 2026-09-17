@@ -242,6 +242,7 @@
 
   renderProduct();
   document.addEventListener('charm:products-synced', renderProduct);
+  document.addEventListener('charm:currency-ready', renderProduct);
   document.addEventListener('DOMContentLoaded', () => {
     if(typeof CharmStore !== 'undefined') CharmStore.refreshButtonStates();
   });
