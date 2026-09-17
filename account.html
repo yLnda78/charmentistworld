@@ -385,6 +385,7 @@
     document.getElementById('stat-wishlist').textContent = CharmStore.getWishlist().length;
   });
   document.addEventListener('charm:products-synced', renderWishlist);
+  document.addEventListener('charm:currency-ready', renderWishlist);
 
   // ---------------- Addresses (localStorage CRUD, keyed by email) ----------------
   var ADDR_KEY = 'charm_addresses';
