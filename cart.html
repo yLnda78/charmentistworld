@@ -114,6 +114,7 @@ function renderCart(){
 document.addEventListener('DOMContentLoaded', () => {
   renderCart();
   document.addEventListener('charm:store-synced', renderCart);
+  document.addEventListener('charm:currency-ready', renderCart);
   document.addEventListener('charm:products-synced', renderCart); // prices/stock may have changed
   document.getElementById('cart-items').addEventListener('click', (e) => {
     const row = e.target.closest('[data-product-id]');
