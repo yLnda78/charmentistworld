@@ -170,6 +170,7 @@
   input.focus();
 
   document.addEventListener('charm:products-synced', () => { if(input.value.trim()) runSearch(input.value); });
+  document.addEventListener('charm:currency-ready', () => { if(input.value.trim()) runSearch(input.value); });
 })();
 </script>
 </body></html>
