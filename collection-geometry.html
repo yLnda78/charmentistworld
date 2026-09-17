@@ -191,6 +191,8 @@
     ]);
     CharmSEO.setItemListSchema(pieces, 'Frame Language Collection');
   }
+  if(window.CharmCurrency) CharmCurrency.convertStaticPrices();
+  document.addEventListener('charm:currency-ready', function(){ if(window.CharmCurrency) CharmCurrency.convertStaticPrices(); });
 </script>
 </body>
 </html>
