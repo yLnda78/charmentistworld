@@ -143,8 +143,14 @@ const CharmData = {
     const pool = CHARM_PRODUCTS.filter(x => x.collection === p.collection && x.id !== id);
     return pool.slice(0, count || 4);
   },
+  // Prices in every product object above are stored as plain USD numbers.
+  // assets/js/currency.js detects the visitor's country and converts —
+  // Indonesia → IDR, France → EUR, etc, with USD as the safe fallback if
+  // detection isn't available yet or fails. See currency.js for details.
   formatPrice(n){
+    if(window.CharmCurrency) return window.CharmCurrency.format(n);
     return '$' + Number(n).toLocaleString('en-US');
+  },
   },
   // Small meta line shown under a product's price on tile cards (collection
   // grids, search, wishlist, related pieces) — BEFORE a shopper clicks into
