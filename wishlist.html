@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderWishlist();
   document.addEventListener('charm:store-synced', renderWishlist);
   document.addEventListener('charm:products-synced', renderWishlist);
+  document.addEventListener('charm:currency-ready', renderWishlist);
   document.getElementById('wish-grid').addEventListener('click', (e) => {
     const removeBtn = e.target.closest('[data-remove-wishlist]');
     if(removeBtn){
