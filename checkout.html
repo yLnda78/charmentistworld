@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request This Order — CHARMENTIST</title>
+<meta name="description" content="Send your selection to the CHARMENTIST Concierge. No payment is taken here — a Concierge confirms every detail with you first.">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .req-layout{display:grid; grid-template-columns:1.6fr 1fr; gap:50px;}
+  @media(max-width:900px){.req-layout{grid-template-columns:1fr;}}
+  .summary-panel{position:sticky; top:110px;}
+  @media(max-width:900px){.summary-panel{position:static;}}
+  .concierge-note{border:1px solid var(--line,#e4e0d8); padding:16px 18px; font-size:.9rem; line-height:1.7; color:var(--muted); margin:18px 0 28px;}
+  .review-item{display:flex; gap:14px; padding:12px 0; border-bottom:1px solid var(--line,#eee);}
+  .review-item img{width:64px; height:64px; object-fit:cover;}
+  .field-error{color:#b33; font-size:.82rem; margin-top:6px; display:none;}
+  .field-error.is-visible{display:block;}
+</style>
+</head>
+<body data-page="checkout.html">
+<div id="site-header" data-variant="light"></div>
+
+<section class="section-pad" style="padding-bottom:0;">
+  <div class="eyebrow">Assisted Checkout</div>
+  <h1 class="serif" style="font-size:2rem; margin-top:6px;">Send Your Request to the Concierge</h1>
+  <p class="body-text" style="max-width:640px; margin-top:10px; color:var(--muted);">
+    CHARMENTIST does not process automatic online payment. Once you send this request, a Private Concierge
+    reviews availability and pricing personally and confirms every detail with you before any payment is discussed.
+  </p>
+  <div class="concierge-note">
+    <strong>What happens next:</strong> You send this request → a Concierge contacts you (WhatsApp or email, your choice)
+    to confirm the piece, sizing, final price and shipping → once you approve, we send written payment instructions →
+    your order enters production only after payment is confirmed. No payment is requested or required at this step.
+  </div>
+</section>
+
+<section class="section-pad" style="padding-top:0;" id="checkout-filled">
+  <div class="req-layout">
+    <div>
+      <form id="request-form" novalidate>
+        <input type="text" name="website" id="f-hp" autocomplete="off" tabindex="-1" style="position:absolute; left:-9999px;" aria-hidden="true">
+
+        <div class="eyebrow">Your Selection</div>
+        <div id="review-items"></div>
+
+        <div class="eyebrow mt-40">Your Contact Information</div>
+        <div class="field-row">
+          <div class="field"><label for="f-name">Full Name</label><input id="f-name" required></div>
+          <div class="field"><label for="f-phone">WhatsApp / Phone Number</label><input id="f-phone" placeholder="+62..." required></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="f-email">Email Address</label><input id="f-email" type="email" required></div>
+          <div class="field">
+            <label for="f-country">Country</label>
+            <select id="f-country" required>
+              <option value="">Select country</option>
+              <option>Indonesia</option><option>Singapore</option><option>Malaysia</option>
+              <option>Australia</option><option>United States</option><option>United Kingdom</option>
+              <option>United Arab Emirates</option><option>Japan</option><option>South Korea</option>
+              <option>Hong Kong</option><option>France</option><option>Germany</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label for="f-city">City (optional)</label><input id="f-city"></div>
+
+        <div class="eyebrow mt-40">How Should We Reach You?</div>
+        <div class="field-row" role="radiogroup">
+          <label class="field" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <input type="radio" name="channel" value="whatsapp" checked style="width:auto;"> WhatsApp
+          </label>
+          <label class="field" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <input type="radio" name="channel" value="email" style="width:auto;"> Email
+          </label>
+        </div>
+
+        <div class="field"><label for="f-notes">Anything the Concierge should know? (optional)</label>
+          <textarea id="f-notes" rows="4" placeholder="Ring sizing help, gifting timeline, engraving idea, etc."></textarea>
+        </div>
+
+        <p class="field-error" id="form-error"></p>
+        <button type="submit" class="btn btn-dark mt-40" id="submit-request-btn" style="width:100%; justify-content:center;">Send Request to Concierge →</button>
+        <p class="small" style="margin-top:14px; color:var(--muted);">By sending this request you are not placing a paid order. No charge will be made until you have confirmed final pricing with your Concierge in writing.</p>
+      </form>
+    </div>
+
+    <aside class="summary-panel">
+      <div class="eyebrow">Request Summary</div>
+      <div class="panel" id="summary-panel">
+        <div class="small" style="display:flex; justify-content:space-between;"><span>Pieces</span><span id="summary-count">0</span></div>
+        <div class="small" style="display:flex; justify-content:space-between; margin-top:8px;"><span>Indicative Total</span><span id="summary-total">—</span></div>
+        <p class="small" style="margin-top:14px; color:var(--muted);">This is an indicative total only. Your Concierge will confirm the final price, currency, shipping and any applicable duties before payment.</p>
+      </div>
+      <a class="btn btn-outline mt-40" href="cart.html" style="width:100%; justify-content:center;">Edit Selection</a>
+    </aside>
+  </div>
+</section>
+
+<section class="section-pad wrap" id="checkout-empty" style="display:none;">
+  <div class="empty-state">
+    <h3>Your selection is empty</h3>
+    <p>Add a piece from any collection, then come back here to send your request to the Concierge.</p>
+    <a class="btn btn-dark" href="index.html#collections">Browse Collections</a>
+  </div>
+</section>
+
+<!-- SUCCESS -->
+<section class="section-pad wrap" id="checkout-success" style="display:none;">
+  <div class="empty-state">
+    <h3>Your request has been sent</h3>
+    <p id="checkout-success-msg">
+      Your reference is <strong id="checkout-ref"></strong>. A Concierge will contact you personally to confirm
+      your order — no payment has been made or requested. You can also continue the conversation on WhatsApp now.
+    </p>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:8px;">
+      <a class="btn btn-dark" id="checkout-wa-link" href="#" target="_blank" rel="noopener">Continue on WhatsApp →</a>
+      <a class="btn btn-outline" id="checkout-track-link" href="track-order.html">Track This Request</a>
+      <a class="btn btn-outline" href="index.html#collections">Continue Shopping</a>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/currency.js"></script>
+<script src="assets/js/products.js"></script>
+<script src="assets/js/seo.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+(function(){
+  const API_BASE = window.CHARM_API_BASE || 'http://localhost:4000/api';
+
+  function getItems(){
+    const cart = CharmStore.getCart();
+    return cart.map(ci => ({ ...ci, product: CharmData.byId(ci.id) })).filter(x => x.product);
+  }
+
+  function renderReview(){
+    const items = getItems();
+    const filled = document.getElementById('checkout-filled');
+    const empty = document.getElementById('checkout-empty');
+    if(items.length === 0){
+      filled.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+    filled.style.display = 'block';
+    empty.style.display = 'none';
+    const wrap = document.getElementById('review-items');
+    wrap.innerHTML = items.map(({product: p, qty, size}) => `
+      <div class="review-item">
+        <img src="${p.img}" alt="${p.name}">
+        <div style="flex:1;">
+          <strong>${p.name}</strong><br>
+          <span class="small">${p.material}</span>${size ? ` · Ring size ${size}` : ''}${qty > 1 ? ` · Qty ${qty}` : ''}<br>
+          <span class="small" style="color:var(--muted);">Indicative: ${CharmData.formatPrice(p.price * qty)}</span>
+        </div>
+      </div>`).join('');
+    let totalQty = 0, totalUsd = 0;
+    items.forEach(({product: p, qty}) => { totalQty += qty; totalUsd += p.price * qty; });
+    document.getElementById('summary-count').textContent = totalQty;
+    document.getElementById('summary-total').textContent = CharmData.formatPrice(totalUsd);
+  }
+
+  function showError(msg){
+    const el = document.getElementById('form-error');
+    el.textContent = msg;
+    el.classList.add('is-visible');
+    el.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+
+  document.getElementById('request-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    document.getElementById('form-error').classList.remove('is-visible');
+    const items = getItems();
+    if(items.length === 0) return;
+
+    const name = document.getElementById('f-name').value.trim();
+    const phone = document.getElementById('f-phone').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    const country = document.getElementById('f-country').value;
+    const city = document.getElementById('f-city').value.trim();
+    const notes = document.getElementById('f-notes').value.trim();
+    const channel = document.querySelector('input[name="channel"]:checked').value;
+    const honeypot = document.getElementById('f-hp').value;
+
+    if(!name || !phone || !email || !country){
+      showError('Please fill in your name, phone, email, and country so your Concierge can reach you.');
+      return;
+    }
+
+    const payload = {
+      website: honeypot,
+      name, phone, email, country, city, notes,
+      preferredChannel: channel,
+      items: items.map(({product: p, qty, size}) => ({ id: p.id, qty, size: size || undefined }))
+    };
+
+    const btn = document.getElementById('submit-request-btn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try{
+      const res = await fetch(API_BASE + '/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if(!res.ok){
+        showError(data.error || 'Something went wrong sending your request. Please try again or contact us on WhatsApp.');
+        btn.disabled = false;
+        btn.textContent = 'Send Request to Concierge →';
+        return;
+      }
+      document.getElementById('checkout-ref').textContent = data.reference;
+      const waNumber = (window.CHARM_CONTACT && CHARM_CONTACT.whatsapp) || '';
+      const waMsg = `Hi CHARMENTIST, I just sent request ${data.reference} for: ` +
+        items.map(({product: p, qty, size}) => `${p.name}${size ? ' (size ' + size + ')' : ''}${qty > 1 ? ' x' + qty : ''}`).join(', ');
+      document.getElementById('checkout-wa-link').href = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waMsg);
+      document.getElementById('checkout-track-link').href = 'track-order.html?ref=' + encodeURIComponent(data.reference) + '&email=' + encodeURIComponent(email);
+      CharmStore.clearCart();
+      document.getElementById('checkout-filled').style.display = 'none';
+      document.getElementById('checkout-success').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }catch(err){
+      showError('We could not reach the server. Please check your connection or contact us directly on WhatsApp.');
+      btn.disabled = false;
+      btn.textContent = 'Send Request to Concierge →';
+    }
+  });
+
+  renderReview();
+  document.addEventListener('charm:store-synced', renderReview);
+  document.addEventListener('charm:products-synced', renderReview);
+  document.addEventListener('charm:currency-ready', renderReview);
+})();
+</script>
+</body></html>

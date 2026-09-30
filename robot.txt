@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Do not crawl account/transaction/utility flows — no discoverable
+# content lives here and indexing them would waste crawl budget and
+# could expose logged-in states.
+Disallow: /cart.html
+Disallow: /checkout.html
+Disallow: /signin.html
+Disallow: /account.html
+Disallow: /admin.html
+Disallow: /wishlist.html
+Disallow: /track-order.html
+Disallow: /search.html
+
+Sitemap: https://ylnda78.github.io/charmentistworld/sitemap.xml
