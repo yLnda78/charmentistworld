@@ -361,23 +361,7 @@ nav.main-nav .nav-item.mega-open .nav-caret{transform:rotate(180deg);}
 .card-badge.card-badge-visa{background:#1a1f71;}
 .card-badge.card-badge-mc{background:#eb001b;}
 .card-badge.card-badge-amex{background:#016fd0;}
-.card-badge.card-badge-maestro{background:#0099df;}
-.badge-more{background:transparent; color:var(--muted); font-weight:500; padding:4px 2px; align-self:center;}
-
-/* Card number field with a lock icon inside it, like Grafea/Shopify */
-.cc-input-icon{position:relative;}
-.cc-input-icon input{padding-right:38px;}
-.cc-input-icon svg{position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none;}
-
-/* Wallet / BNPL wordmarks shown next to their row, same slot as card-badges */
-.pay-logo{font-family:var(--sans); font-size:.7rem; font-weight:700; white-space:nowrap; line-height:1;}
-.pay-logo-group{display:flex; align-items:center; gap:6px; flex-shrink:0;}
-.pay-logo-paypal .pp-pay{color:#003087;}
-.pay-logo-paypal .pp-pal{color:#009cde;}
-.pay-logo-klarna{background:#ffb3c7; color:#0b051d; padding:4px 8px; border-radius:3px; letter-spacing:.02em;}
-.pay-logo-alipay{background:#eaf4ff; color:#1677ff; padding:4px 7px; border-radius:3px; font-size:.62rem;}
-.pay-logo-wechat{background:#e9f9ec; color:#07c160; padding:4px 7px; border-radius:3px; font-size:.62rem;}
-.pay-logo-qris{background:#fdece9; color:#e4002b; padding:4px 7px; border-radius:3px; font-size:.62rem; letter-spacing:.03em;}
+.badge-more{background:var(--muted); align-self:center;}
 
 /* Bank / wire account rows inside a payment detail panel */
 .bank-row{display:flex; justify-content:space-between; align-items:center; gap:12px;

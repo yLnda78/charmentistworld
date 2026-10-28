@@ -124,9 +124,10 @@ const PAYMENT_METHODS = {
 
   international: [
     'card',
+    'wire-transfer',
     'paypal',
-    'klarna',
-    'alipay-wechatpay'
+    'escrow',
+    'invoice'
   ]
 
 };
@@ -403,14 +404,14 @@ router.post(
       qris:
         'QRIS',
 
+      'wire-transfer':
+        'International Bank Wire (SWIFT)',
+
       paypal:
         'PayPal',
 
-      klarna:
-        'Klarna',
-
-      'alipay-wechatpay':
-        'Alipay & WeChatPay',
+      escrow:
+        'Escrow Service',
 
       invoice:
         'Pay via Invoice'

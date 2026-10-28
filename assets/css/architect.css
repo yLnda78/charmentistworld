@@ -1,0 +1,276 @@
+/* =====================================================================
+   CHARMENTIST — ARCHITECTURAL THEME (override layer on top of style.css)
+   Palette is taken from the jewelry photography itself:
+   rhodium frames, burgundy velvet, sapphire blue, emerald green,
+   citrine yellow and the orange acrylic of the product shots.
+   Language: frames, axes, hairlines, square corners, nested outlines.
+   ===================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap');
+
+:root{
+  /* brand palette */
+  --rhodium:#c5cad2;      /* white-gold frame / hairlines */
+  --stone:#e6e6e1;        /* pale stone, like the first photo's backdrop */
+  --burgundy:#531521;     /* velvet */
+  --burgundy-deep:#2b0a12;
+  --sapphire:#1c3f94;
+  --navy:#0f2557;
+  --emerald:#0e5b43;
+  --citrine:#e9b824;
+  --amber:#e4701e;        /* orange acrylic */
+  --graphite:#1d2230;
+
+  /* remap the base theme variables so every page follows */
+  --black:var(--burgundy-deep);
+  --dark:var(--burgundy);
+  --brown:var(--burgundy);
+  --cream:#ecece8;
+  --cream-2:var(--stone);
+  --paper:#f5f5f2;
+  --line:var(--rhodium);
+  --text:var(--graphite);
+  --muted:#667084;
+  --gold:var(--sapphire);
+  --serif:'Archivo','Helvetica Neue',Arial,sans-serif;
+  --sans:'Jost',Arial,sans-serif;
+}
+
+body{font-weight:400; background:var(--paper);}
+::selection{background:var(--sapphire); color:#fff;}
+:focus-visible{outline:2px solid var(--sapphire); outline-offset:3px;}
+
+/* page margins drawn like the edges of a drawing sheet */
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    linear-gradient(90deg,transparent calc(3vw - .5px),var(--rhodium) calc(3vw - .5px),var(--rhodium) calc(3vw + .5px),transparent calc(3vw + .5px)),
+    linear-gradient(90deg,transparent calc(97vw - .5px),var(--rhodium) calc(97vw - .5px),var(--rhodium) calc(97vw + .5px),transparent calc(97vw + .5px));
+  opacity:.7;
+}
+@media(max-width:700px){body::before{display:none;}}
+main,section,footer,#site-footer,.hero{position:relative; z-index:1;}
+
+/* ---------- type ---------- */
+h1,h2,h3,h4,.serif{
+  font-family:var(--serif); font-weight:300; font-stretch:118%;
+  font-variation-settings:"wdth" 118; letter-spacing:-.005em; line-height:1.08;
+}
+.section-title,h2.serif{
+  font-family:var(--serif); font-weight:300; font-stretch:118%;
+  font-size:clamp(1.9rem,3.6vw,3.1rem); line-height:1.06; letter-spacing:-.01em;
+  color:var(--burgundy-deep); margin-bottom:20px;
+}
+.body-text{font-weight:400; line-height:1.85;}
+.body-text .lede{
+  display:block; font-family:var(--serif); font-stretch:108%; font-weight:400;
+  font-size:1.2rem; line-height:1.4; color:var(--sapphire); margin-bottom:6px;
+}
+
+/* labels: a short drawn axis tick + gem square instead of a tracked caps label */
+.eyebrow{
+  display:inline-flex; align-items:center; gap:12px;
+  font-size:.82rem; letter-spacing:.03em; text-transform:none; font-weight:500;
+  color:var(--graphite); margin-bottom:22px;
+}
+.eyebrow::before{content:""; width:34px; height:1px; background:currentColor;}
+.eyebrow::after{content:""; width:7px; height:7px; background:var(--citrine); order:-1; margin-right:-6px;}
+.text-center .eyebrow,.eyebrow.text-center,.center-col .eyebrow{display:inline-flex; justify-content:center;}
+
+/* ---------- buttons: sharp, framed ---------- */
+.btn,.link-arrow{border-radius:0; font-weight:500; letter-spacing:.16em;}
+.btn{padding:16px 34px; border-width:1px; transition:background .25s ease,color .25s ease,border-color .25s ease;}
+.btn-dark{background:var(--burgundy); color:#fff; border-color:var(--burgundy);}
+.btn-dark:hover{background:var(--sapphire); border-color:var(--sapphire); color:#fff;}
+.btn-outline{color:var(--burgundy-deep); border-color:var(--burgundy-deep); background:transparent;}
+.btn-outline:hover{background:var(--burgundy-deep); color:#fff;}
+.btn-light{color:#fff; border-color:rgba(255,255,255,.75);}
+.btn-light:hover{background:#fff; color:var(--burgundy-deep); border-color:#fff;}
+.link-arrow{border-bottom:1px solid currentColor; padding:0 0 4px; background:none; color:var(--sapphire); box-shadow:none;}
+.link-arrow:hover{color:var(--burgundy);}
+
+/* ---------- header ---------- */
+.logo{font-family:var(--serif); font-stretch:125%; font-variation-settings:"wdth" 125; font-weight:300; letter-spacing:.3em; font-size:1.35rem;}
+#site-header.is-scrolled,#site-header.on-light{background:rgba(245,245,242,.95); border-color:var(--rhodium);}
+nav.main-nav a,.header-utility a{font-weight:500;}
+nav.main-nav a.active,nav.main-nav a:hover,.header-utility a:hover{border-color:var(--sapphire);}
+.mega-menu{border-top:2px solid var(--sapphire); box-shadow:none;}
+.mega-col-title{color:var(--sapphire);}
+.mega-col a:hover{color:var(--sapphire);}
+
+/* ---------- hero: the one bold moment ----------
+   Nested frames + crossing axes over the photo, echoing the jewelry itself.
+   A single citrine "stone" sits where the axes meet. */
+.hero{min-height:94vh;}
+.hero::before{
+  content:""; position:absolute; inset:0; z-index:0;
+  background:
+    linear-gradient(var(--citrine),var(--citrine)) no-repeat 78% 38% / 12px 12px,
+    linear-gradient(90deg,transparent calc(78% - .5px),rgba(255,255,255,.5) calc(78% - .5px),rgba(255,255,255,.5) calc(78% + .5px),transparent calc(78% + .5px)),
+    linear-gradient(180deg,transparent calc(38% - .5px),rgba(255,255,255,.5) calc(38% - .5px),rgba(255,255,255,.5) calc(38% + .5px),transparent calc(38% + .5px)),
+    linear-gradient(180deg,rgba(15,37,87,.18) 0%,rgba(83,21,33,.42) 55%,rgba(43,10,18,.9) 100%);
+}
+.hero::after{
+  content:""; position:absolute; z-index:1; inset:104px 40px 40px 40px; pointer-events:none;
+  border:1px solid rgba(255,255,255,.65);
+  outline:1px solid rgba(255,255,255,.28); outline-offset:10px;
+}
+.hero .hero-inner{position:relative; z-index:2; padding:0 calc(5vw + 40px) 96px;}
+.hero-title{
+  font-family:var(--serif); font-stretch:125%; font-variation-settings:"wdth" 125;
+  font-weight:300; font-size:clamp(2.6rem,6.4vw,5.4rem); line-height:1; letter-spacing:-.01em; color:#fff;
+  margin-bottom:26px;
+}
+.hero-sub{font-weight:400; color:rgba(255,255,255,.9);}
+@media(max-width:800px){
+  .hero::before{
+    background:
+      linear-gradient(180deg,rgba(15,37,87,.2) 0%,rgba(83,21,33,.45) 50%,rgba(43,10,18,.92) 100%);
+  }
+  .hero::after{inset:84px 16px 16px 16px; outline-offset:6px;}
+  .hero .hero-inner{padding:0 calc(16px + 22px) 56px;}
+}
+
+/* ---------- spec bar (replaces the scrolling marquee) ---------- */
+.spec-bar{
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-bottom:1px solid var(--graphite); background:var(--paper);
+}
+.spec-bar .spec{
+  display:flex; align-items:center; gap:12px; padding:20px 2.5vw;
+  font-size:.82rem; font-weight:500; letter-spacing:.03em; color:var(--graphite);
+  border-left:1px solid var(--rhodium);
+}
+.spec-bar .spec:first-child{border-left:0;}
+.spec-bar .pip{width:9px; height:9px; flex:none;}
+.pip-sapphire{background:var(--sapphire);} .pip-emerald{background:var(--emerald);}
+.pip-citrine{background:var(--citrine);} .pip-burgundy{background:var(--burgundy);}
+@media(max-width:700px){
+  .spec-bar{grid-template-columns:1fr 1fr;}
+  .spec-bar .spec:nth-child(3){border-left:0;}
+  .spec-bar .spec:nth-child(n+3){border-top:1px solid var(--rhodium);}
+}
+
+/* ---------- intro blocks: ruled like a drawing title block ---------- */
+.two-col-intro{gap:0; border-top:1px solid var(--graphite); padding-top:40px; align-items:start;}
+.two-col-intro > .body-text{border-left:1px solid var(--rhodium); padding-left:48px;}
+.two-col-intro > .section-title{padding-right:48px;}
+@media(max-width:800px){
+  .two-col-intro{padding-top:28px;}
+  .two-col-intro > .body-text{border-left:0; padding-left:0; border-top:1px solid var(--rhodium); padding-top:24px;}
+  .two-col-intro > .section-title{padding-right:0;}
+}
+
+/* ---------- tabs ---------- */
+.tab-bar{gap:36px; border-bottom:1px solid var(--rhodium);}
+.tab-bar a{font-weight:500; letter-spacing:.14em;}
+.tab-bar a:hover{border-color:var(--sapphire);}
+.tab-bar a.active{border-bottom:2px solid var(--sapphire); color:var(--sapphire);}
+
+/* ---------- tiles: a mounted print with a second frame inside the photo ---------- */
+.tile{
+  background:#fff; border:1px solid var(--rhodium); padding:12px 12px 22px; border-radius:0;
+  transition:border-color .25s ease;
+}
+.tile:hover{border-color:var(--graphite);}
+.tile .tile-img{background:var(--stone); margin-bottom:18px;}
+.tile .tile-img::before{
+  content:""; position:absolute; inset:12px; z-index:1; border:1px solid rgba(255,255,255,.75); pointer-events:none;
+  transition:inset .35s cubic-bezier(.2,.7,.2,1);
+}
+.tile:hover .tile-img::before{inset:7px;}
+.tile .tile-img img{transition:transform .8s cubic-bezier(.2,.7,.2,1);}
+.tile h4{font-size:1.1rem; font-stretch:112%; font-weight:400; padding:0 6px; color:var(--burgundy-deep);}
+.tile p,.tile .price,.tile .tile-meta{padding:0 6px;}
+.tile p{color:var(--muted);}
+.tile .tile-link{padding:0 6px; color:var(--sapphire); font-weight:500;}
+
+/* the three collections take the colours of their stone backdrops */
+.centered-collections-grid .tile{border:0; color:#fff;}
+.centered-collections-grid .tile:nth-child(1){background:var(--emerald);}
+.centered-collections-grid .tile:nth-child(2){background:var(--burgundy);}
+.centered-collections-grid .tile:nth-child(3){background:var(--navy);}
+.centered-collections-grid .tile h4{color:#fff; font-size:1.35rem; margin-top:4px;}
+.centered-collections-grid .tile p{color:rgba(255,255,255,.82);}
+.centered-collections-grid .tile .tile-link{color:var(--citrine); opacity:1;}
+.centered-collections-grid .tile:hover .tile-link{opacity:1; color:#fff;}
+.centered-collections-grid .tile .tile-img{background:rgba(0,0,0,.25);}
+
+/* ---------- imagery in mats ---------- */
+.grid-3 > img,.grid-2 > img{background:#fff; border:1px solid var(--rhodium); padding:10px; border-radius:0;}
+
+/* ---------- three principles: hairline table with a gem per cell ---------- */
+.idx-grid{background:var(--rhodium); border:1px solid var(--graphite); gap:1px;}
+.idx-card{background:var(--paper); padding:34px 30px 38px; border-radius:0;}
+.idx-card::before{content:""; display:block; width:12px; height:12px; margin-bottom:26px; background:var(--citrine);}
+.idx-card:nth-child(2)::before{background:var(--emerald);}
+.idx-card:nth-child(3)::before{background:var(--sapphire);}
+.idx-card .idx-num{font-size:.8rem; letter-spacing:.03em; text-transform:none; color:var(--muted); font-weight:500;}
+.idx-card h4{font-size:1.3rem; text-transform:none; letter-spacing:-.005em; font-stretch:112%; color:var(--burgundy-deep); margin-bottom:12px;}
+.idx-card p{font-size:.88rem; line-height:1.7; color:var(--text);}
+
+/* ---------- the design process is a real sequence: numbered, square nodes ---------- */
+.process-steps{margin-top:64px;}
+.process-steps::before,.process-steps.on-light::before{background:var(--graphite); top:13px;}
+.process-steps .pstep .dot,.process-steps.on-light .pstep .dot{
+  width:26px; height:26px; border-radius:0; border:0; background:var(--sapphire); color:#fff;
+  font-size:.62rem; font-weight:500;
+}
+.process-steps .pstep:nth-child(2) .dot{background:var(--emerald);}
+.process-steps .pstep:nth-child(3) .dot{background:var(--burgundy);}
+.process-steps .pstep:nth-child(4) .dot{background:var(--citrine); color:var(--burgundy-deep);}
+.process-steps .pstep h5{font-family:var(--serif); font-stretch:112%; font-size:.95rem; text-transform:none; letter-spacing:0; font-weight:500; margin-top:14px;}
+.process-steps .pstep p{opacity:1; color:var(--muted); font-size:.8rem; max-width:220px; margin:0 auto;}
+@media(max-width:700px){
+  .process-steps{flex-direction:column; gap:28px; padding-left:14px;}
+  .process-steps::before,.process-steps.on-light::before{top:0; bottom:0; left:26px; right:auto; width:1px; height:auto;}
+  .process-steps .pstep{text-align:left; display:grid; grid-template-columns:26px 1fr; column-gap:18px;}
+  .process-steps .pstep .dot{grid-row:1 / span 2; margin:0;}
+  .process-steps .pstep h5{margin-top:0;}
+  .process-steps .pstep p{margin:0; max-width:none;}
+}
+
+/* ---------- full-bleed burgundy band, framed twice ---------- */
+.dark-band{background:var(--burgundy); color:#fff; padding-block:120px; overflow:hidden;}
+.dark-band::before{
+  content:""; position:absolute; inset:36px 6vw; border:1px solid rgba(255,255,255,.4);
+  outline:1px solid rgba(255,255,255,.18); outline-offset:10px; pointer-events:none;
+}
+.dark-band .wrap{position:relative;}
+.dark-band .section-title{color:#fff; font-size:clamp(2.2rem,5.4vw,4.4rem); font-stretch:125%; margin-bottom:0;}
+.dark-band .eyebrow{color:#fff;}
+
+/* ---------- two statements as drawing sheets ---------- */
+.panel{border:1px solid var(--graphite); background:var(--paper); padding:44px 40px; border-radius:0; box-shadow:none;}
+.panel h3{font-size:1.5rem !important; font-stretch:115%; margin-bottom:14px !important; color:var(--burgundy-deep);}
+.grid-2 .panel:nth-child(2){background:var(--navy); border-color:var(--navy); color:#fff;}
+.grid-2 .panel:nth-child(2) h3,.grid-2 .panel:nth-child(2) .eyebrow,.grid-2 .panel:nth-child(2) .body-text{color:#fff;}
+.grid-2 .panel:nth-child(2) .eyebrow::after{background:var(--citrine);}
+
+/* ---------- forms ---------- */
+input,select,textarea,.field input,.field select,.field textarea{border-radius:0 !important;}
+.newsletter input{border:1px solid var(--graphite); background:#fff; color:var(--text); transition:border-color .2s ease;}
+.newsletter input:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--sapphire); outline:none; box-shadow:0 0 0 1px var(--sapphire);}
+.newsletter.on-light button{background:var(--burgundy); color:#fff;}
+.newsletter.on-light button:hover{background:var(--sapphire);}
+.newsletter button{border-radius:0; font-weight:500;}
+
+/* ---------- panels in checkout / account ---------- */
+.delivery-option.is-active,.pay-row.is-active,.pay-detail-panel{border-color:var(--sapphire);}
+.pay-row.is-active .pay-radio{border-color:var(--sapphire);}
+.pay-row.is-active .pay-radio::after{background:var(--sapphire);}
+.step.active .dot{background:var(--sapphire); border-color:var(--sapphire);}
+.icon-btn.is-active{background:var(--burgundy); border-color:var(--burgundy);}
+
+/* ---------- footer: burgundy with a strip of the four stone colours ---------- */
+#site-footer{background:var(--burgundy-deep); color:rgba(255,255,255,.78); padding-top:84px;}
+#site-footer::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:5px;
+  background:linear-gradient(90deg,var(--sapphire) 0 25%,var(--emerald) 25% 50%,var(--citrine) 50% 75%,var(--amber) 75% 100%);
+}
+.footer-col h5{color:#fff; font-weight:500;}
+.footer-col a:hover,.footer-trust a:hover{color:var(--citrine);}
+.footer-social a{border-radius:0;}
+
+@media (prefers-reduced-motion:reduce){
+  .tile .tile-img::before,.tile .tile-img img{transition:none;}
+}

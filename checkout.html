@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Checkout — CHARMENTIST</title>
 <link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/architect.css">
 </head>
 
 <body data-page="checkout.html">
@@ -518,41 +519,33 @@
   <div class="empty-state">
 
     <h3>
-      Almost there — finish your order on WhatsApp
+      Thank you — your order has been received
     </h3>
 
 
     <p id="checkout-success-msg">
 
-      Your order reference is
+      Your order number is
       <strong id="checkout-order-number"></strong>.
-      We've opened WhatsApp with your order details ready to send —
-      if it didn't open automatically, tap the button below.
-      A member of our team will confirm payment and delivery with
-      you directly in the chat.
+
+      A member of our team will be in touch by email or phone shortly
+      to confirm payment and delivery.
 
     </p>
 
-    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:8px;">
+    <div
+      id="checkout-va-details"
+      class="panel small"
+      style="display:none; margin:16px 0; text-align:left;"
+    ></div>
 
-      <a
-        class="btn btn-dark"
-        id="checkout-wa-link"
-        href="#"
-        target="_blank"
-        rel="noopener"
-      >
-        Continue on WhatsApp →
-      </a>
 
-      <a
-        class="btn btn-outline"
-        href="index.html#collections"
-      >
-        Continue Shopping
-      </a>
-
-    </div>
+    <a
+      class="btn btn-dark"
+      href="index.html#collections"
+    >
+      Continue Shopping
+    </a>
 
   </div>
 
@@ -609,6 +602,21 @@
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/store.js"></script>
 <script src="assets/js/main.js"></script>
+
+
+
+<!-- =========================================================
+     MIDTRANS SNAP
+     
+     IMPORTANT:
+     Replace YOUR_MIDTRANS_CLIENT_KEY with the real Sandbox
+     client key during testing.
+========================================================= -->
+
+<script
+  src="https://app.sandbox.midtrans.com/snap/snap.js"
+  data-client-key="YOUR_MIDTRANS_CLIENT_KEY"
+></script>
 
 
 
@@ -720,161 +728,6 @@ const COUNTRY_CURRENCIES = {
   'United States':'USD'
 
 };
-
-
-/* ============================================================
-   WHATSAPP CHECKOUT
-   ---------------------------------------------------------
-   Every order on this site is finalised over WhatsApp instead
-   of a payment gateway. WA_PHONE is CHARMENTIST's business
-   number (international format, no "+", no spaces).
-
-   LANGUAGE_BY_COUNTRY maps each country in the dropdown above
-   to the language its WhatsApp order message is written in —
-   change the country, and the message that goes to WhatsApp
-   automatically switches language too. Any country not listed
-   falls back to English.
-============================================================ */
-
-const WA_PHONE = '6282379983844';
-
-const LANGUAGE_BY_COUNTRY = {
-  Australia:'en',
-  Canada:'en',
-  Denmark:'da',
-  France:'fr',
-  Germany:'de',
-  Italy:'it',
-  Netherlands:'nl',
-  'Hong Kong':'zh',
-  Indonesia:'id',
-  Japan:'ja',
-  'New Zealand':'en',
-  Norway:'no',
-  Qatar:'ar',
-  'Saudi Arabia':'ar',
-  Singapore:'en',
-  'South Korea':'ko',
-  Sweden:'sv',
-  Switzerland:'de',
-  'United Arab Emirates':'ar',
-  'United Kingdom':'en',
-  'United States':'en'
-};
-
-const WA_I18N = {
-  en: {
-    greeting:'Hello CHARMENTIST 👋', intro:'I would like to place the following order:',
-    items_header:'ITEMS', summary_header:'ORDER SUMMARY', subtotal:'Subtotal', shipping:'Shipping',
-    tax:'Tax', total:'Total', complimentary:'Complimentary', delivery_header:'DELIVERY & PAYMENT',
-    delivery_method:'Delivery method', payment_method:'Preferred payment', shipping_header:'SHIPPING DETAILS',
-    order_ref:'Order reference', qty:'Qty', size:'Size',
-    closing:'Could you please confirm this order and the next steps? Thank you.'
-  },
-  id: {
-    greeting:'Halo CHARMENTIST 👋', intro:'Saya ingin melakukan pemesanan berikut:',
-    items_header:'DAFTAR PRODUK', summary_header:'RINGKASAN PESANAN', subtotal:'Subtotal', shipping:'Ongkos Kirim',
-    tax:'Pajak', total:'Total', complimentary:'Gratis', delivery_header:'PENGIRIMAN & PEMBAYARAN',
-    delivery_method:'Metode pengiriman', payment_method:'Metode pembayaran', shipping_header:'DETAIL PENGIRIMAN',
-    order_ref:'Nomor referensi pesanan', qty:'Jumlah', size:'Ukuran',
-    closing:'Mohon konfirmasinya untuk pesanan ini beserta langkah selanjutnya. Terima kasih.'
-  },
-  da: {
-    greeting:'Hej CHARMENTIST 👋', intro:'Jeg vil gerne afgive følgende bestilling:',
-    items_header:'VARER', summary_header:'ORDREOVERSIGT', subtotal:'Subtotal', shipping:'Fragt',
-    tax:'Moms', total:'Total', complimentary:'Gratis', delivery_header:'LEVERING & BETALING',
-    delivery_method:'Leveringsmetode', payment_method:'Foretrukken betaling', shipping_header:'LEVERINGSOPLYSNINGER',
-    order_ref:'Ordrenummer', qty:'Antal', size:'Størrelse',
-    closing:'Kan I bekræfte denne ordre og de næste trin? Mange tak.'
-  },
-  fr: {
-    greeting:'Bonjour CHARMENTIST 👋', intro:'Je souhaite passer la commande suivante :',
-    items_header:'ARTICLES', summary_header:'RÉCAPITULATIF DE LA COMMANDE', subtotal:'Sous-total', shipping:'Livraison',
-    tax:'Taxe', total:'Total', complimentary:'Offerte', delivery_header:'LIVRAISON & PAIEMENT',
-    delivery_method:'Mode de livraison', payment_method:'Moyen de paiement préféré', shipping_header:'COORDONNÉES DE LIVRAISON',
-    order_ref:'Référence de commande', qty:'Qté', size:'Taille',
-    closing:'Pourriez-vous confirmer cette commande et les prochaines étapes ? Merci beaucoup.'
-  },
-  de: {
-    greeting:'Hallo CHARMENTIST 👋', intro:'Ich möchte gerne folgende Bestellung aufgeben:',
-    items_header:'ARTIKEL', summary_header:'BESTELLÜBERSICHT', subtotal:'Zwischensumme', shipping:'Versand',
-    tax:'Steuer', total:'Gesamt', complimentary:'Kostenlos', delivery_header:'LIEFERUNG & ZAHLUNG',
-    delivery_method:'Versandart', payment_method:'Bevorzugte Zahlungsmethode', shipping_header:'LIEFERADRESSE',
-    order_ref:'Bestellreferenz', qty:'Menge', size:'Größe',
-    closing:'Könnten Sie diese Bestellung und die nächsten Schritte bestätigen? Vielen Dank.'
-  },
-  it: {
-    greeting:'Ciao CHARMENTIST 👋', intro:'Vorrei effettuare il seguente ordine:',
-    items_header:'ARTICOLI', summary_header:'RIEPILOGO ORDINE', subtotal:'Subtotale', shipping:'Spedizione',
-    tax:'Imposta', total:'Totale', complimentary:'Gratuita', delivery_header:'CONSEGNA E PAGAMENTO',
-    delivery_method:'Metodo di consegna', payment_method:'Metodo di pagamento preferito', shipping_header:'DETTAGLI DI SPEDIZIONE',
-    order_ref:'Riferimento ordine', qty:'Quantità', size:'Taglia',
-    closing:'Potreste confermare questo ordine e i prossimi passi? Grazie mille.'
-  },
-  nl: {
-    greeting:'Hallo CHARMENTIST 👋', intro:'Ik wil graag de volgende bestelling plaatsen:',
-    items_header:'ARTIKELEN', summary_header:'BESTELOVERZICHT', subtotal:'Subtotaal', shipping:'Verzendkosten',
-    tax:'Belasting', total:'Totaal', complimentary:'Gratis', delivery_header:'LEVERING & BETALING',
-    delivery_method:'Verzendmethode', payment_method:'Gewenste betaalmethode', shipping_header:'VERZENDGEGEVENS',
-    order_ref:'Bestelreferentie', qty:'Aantal', size:'Maat',
-    closing:'Kunt u deze bestelling en de volgende stappen bevestigen? Hartelijk dank.'
-  },
-  ja: {
-    greeting:'CHARMENTIST 様、こんにちは 👋', intro:'以下の内容で注文をお願いしたいです:',
-    items_header:'商品', summary_header:'ご注文内容', subtotal:'小計', shipping:'配送料',
-    tax:'税', total:'合計', complimentary:'無料', delivery_header:'配送・お支払い',
-    delivery_method:'配送方法', payment_method:'希望のお支払い方法', shipping_header:'配送先情報',
-    order_ref:'注文番号', qty:'数量', size:'サイズ',
-    closing:'こちらの注文内容と今後の流れについてご確認いただけますでしょうか。よろしくお願いいたします。'
-  },
-  no: {
-    greeting:'Hei CHARMENTIST 👋', intro:'Jeg ønsker å legge inn følgende bestilling:',
-    items_header:'VARER', summary_header:'ORDREOVERSIKT', subtotal:'Delsum', shipping:'Frakt',
-    tax:'Avgift', total:'Totalt', complimentary:'Gratis', delivery_header:'LEVERING & BETALING',
-    delivery_method:'Leveringsmetode', payment_method:'Foretrukket betalingsmåte', shipping_header:'LEVERINGSDETALJER',
-    order_ref:'Ordrereferanse', qty:'Antall', size:'Størrelse',
-    closing:'Kan dere bekrefte denne bestillingen og neste steg? Tusen takk.'
-  },
-  ar: {
-    greeting:'مرحبًا CHARMENTIST 👋', intro:'أرغب في تقديم الطلب التالي:',
-    items_header:'المنتجات', summary_header:'ملخص الطلب', subtotal:'الإجمالي الفرعي', shipping:'الشحن',
-    tax:'الضريبة', total:'الإجمالي', complimentary:'مجاني', delivery_header:'التوصيل والدفع',
-    delivery_method:'طريقة التوصيل', payment_method:'طريقة الدفع المفضلة', shipping_header:'تفاصيل الشحن',
-    order_ref:'رقم الطلب', qty:'الكمية', size:'المقاس',
-    closing:'هل يمكنكم تأكيد هذا الطلب والخطوات التالية؟ شكرًا جزيلاً.'
-  },
-  ko: {
-    greeting:'안녕하세요 CHARMENTIST 👋', intro:'다음과 같이 주문을 진행하고 싶습니다:',
-    items_header:'상품', summary_header:'주문 요약', subtotal:'소계', shipping:'배송비',
-    tax:'세금', total:'총액', complimentary:'무료', delivery_header:'배송 및 결제',
-    delivery_method:'배송 방법', payment_method:'희망 결제 방법', shipping_header:'배송 정보',
-    order_ref:'주문 번호', qty:'수량', size:'사이즈',
-    closing:'이 주문 내용과 다음 절차를 확인해 주실 수 있을까요? 감사합니다.'
-  },
-  sv: {
-    greeting:'Hej CHARMENTIST 👋', intro:'Jag vill gärna lägga följande beställning:',
-    items_header:'VAROR', summary_header:'ORDERÖVERSIKT', subtotal:'Delsumma', shipping:'Frakt',
-    tax:'Skatt', total:'Totalt', complimentary:'Gratis', delivery_header:'LEVERANS & BETALNING',
-    delivery_method:'Leveransmetod', payment_method:'Önskad betalmetod', shipping_header:'LEVERANSUPPGIFTER',
-    order_ref:'Ordernummer', qty:'Antal', size:'Storlek',
-    closing:'Kan ni bekräfta denna beställning och nästa steg? Tack så mycket.'
-  },
-  zh: {
-    greeting:'您好 CHARMENTIST 👋', intro:'我想下以下訂單：',
-    items_header:'商品', summary_header:'訂單摘要', subtotal:'小計', shipping:'運費',
-    tax:'稅金', total:'總計', complimentary:'免費', delivery_header:'配送與付款',
-    delivery_method:'配送方式', payment_method:'偏好的付款方式', shipping_header:'收件資訊',
-    order_ref:'訂單編號', qty:'數量', size:'尺寸',
-    closing:'可以請您確認這筆訂單及後續流程嗎？謝謝。'
-  }
-};
-
-function currentLanguageCode(){
-  const country =
-    document.getElementById('f-country')?.value ||
-    'Indonesia';
-  return LANGUAGE_BY_COUNTRY[country] || 'en';
-}
 
 
 /* ============================================================
@@ -1362,6 +1215,13 @@ const PAYMENT_OPTIONS = {
     },
 
     {
+      id:'wire-transfer',
+      label:'International Bank Wire (SWIFT)',
+      sub:'Payment instructions provided after order confirmation',
+      gateway:false
+    },
+
+    {
       id:'paypal',
       label:'PayPal',
       sub:'Payment handled securely through PayPal',
@@ -1369,16 +1229,9 @@ const PAYMENT_OPTIONS = {
     },
 
     {
-      id:'klarna',
-      label:'Klarna',
-      sub:'Buy now, pay later — handled securely through Klarna',
-      gateway:false
-    },
-
-    {
-      id:'alipay-wechatpay',
-      label:'Alipay & WeChatPay',
-      sub:'Payment handled securely through Alipay or WeChatPay',
+      id:'invoice',
+      label:'Pay via Invoice',
+      sub:'Arranged personally with your Client Advisor',
       gateway:false
     }
 
@@ -1608,74 +1461,17 @@ function cardBadgesHtml(){
         VISA
       </span>
 
-      <span class="card-badge card-badge-maestro">
-        Maestro
-      </span>
-
       <span class="card-badge card-badge-mc">
         MC
       </span>
 
-      <span class="card-badge badge-more">
-        +5
+      <span class="card-badge card-badge-amex">
+        AMEX
       </span>
 
     </div>
 
   `;
-
-}
-
-
-/* ============================================================
-   PAYMENT LOGO (non-card brands shown to the right of a row,
-   same idea as cardBadgesHtml() but for one wallet/BNPL brand)
-============================================================ */
-
-function paymentLogoHtml(id){
-
-  if(id === 'paypal'){
-
-    return `
-      <span class="pay-logo pay-logo-paypal" aria-label="PayPal">
-        <span class="pp-pay">Pay</span><span class="pp-pal">Pal</span>
-      </span>
-    `;
-
-  }
-
-  if(id === 'klarna'){
-
-    return `
-      <span class="pay-logo pay-logo-klarna" aria-label="Klarna">
-        Klarna
-      </span>
-    `;
-
-  }
-
-  if(id === 'alipay-wechatpay'){
-
-    return `
-      <span class="pay-logo-group" aria-label="Alipay and WeChatPay">
-        <span class="pay-logo pay-logo-alipay">Alipay</span>
-        <span class="pay-logo pay-logo-wechat">WeChatPay</span>
-      </span>
-    `;
-
-  }
-
-  if(id === 'qris'){
-
-    return `
-      <span class="pay-logo pay-logo-qris" aria-label="QRIS">
-        QRIS
-      </span>
-    `;
-
-  }
-
-  return '';
 
 }
 
@@ -1691,35 +1487,28 @@ function paymentDetailHtml(id){
   } = getOrderTotals();
 
 
-  const t =
-    WA_I18N[currentLanguageCode()] || WA_I18N.en;
-
-
-  /*
-    No payment gateway runs on this site anymore — every method
-    below is just the shopper telling us how they'd like to pay.
-    We confirm and arrange the actual payment together on
-    WhatsApp once the order is reviewed, so none of these panels
-    collect real card numbers or trigger an automatic charge.
-  */
-
-  const noteHtml = `
-    <p class="small" style="margin:8px 0 0; color:var(--muted);">
-      No payment is taken here — after you review your order, we'll
-      confirm it together on WhatsApp and arrange payment there.
-    </p>
-  `;
-
   if(id === 'card'){
 
     return `
-      <div class="panel small card-panel">
-        <strong>Credit / Debit Card</strong>
-        ${noteHtml}
-        <p class="small" style="margin:8px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
+
+      <div class="panel small">
+
+        <strong>
+          Secure card payment
+        </strong>
+
+        <p
+          class="small"
+          style="margin:8px 0 0;"
+        >
+          After you place the order, you will be taken to
+          the secure payment window to enter your card details.
+          CHARMENTIST does not collect or store your raw card
+          number or security code.
         </p>
+
       </div>
+
     `;
 
   }
@@ -1728,13 +1517,31 @@ function paymentDetailHtml(id){
   if(id === 'qris'){
 
     return `
+
       <div class="panel small">
-        <strong>QRIS</strong>
-        ${noteHtml}
-        <p class="small" style="margin:8px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
+
+        <strong>
+          QRIS
+        </strong>
+
+        <p
+          class="small"
+          style="margin:8px 0 0;"
+        >
+          After you place the order, the secure payment window
+          will provide the QR payment instructions for this order.
         </p>
+
+        <p
+          class="small"
+          style="margin:8px 0 0;"
+        >
+          Amount:
+          <strong>${fmt(total)}</strong>
+        </p>
+
       </div>
+
     `;
 
   }
@@ -1750,13 +1557,26 @@ function paymentDetailHtml(id){
     ];
 
     return `
+
       <div class="panel small">
-        <strong>Bank Transfer (Virtual Account)</strong>
-        <p class="small" style="margin:8px 0 10px;">
-          Choose your preferred bank — we'll share the Virtual
-          Account number for this order over WhatsApp.
+
+        <strong>
+          Bank Transfer (Virtual Account)
+        </strong>
+
+        <p
+          class="small"
+          style="margin:8px 0 10px;"
+        >
+          Choose your bank. We'll generate a Virtual Account number for
+          this order — your payment confirms automatically once the
+          transfer is received, no proof of payment needed.
         </p>
-        <div id="va-bank-picker" style="display:flex; gap:8px; flex-wrap:wrap;">
+
+        <div
+          id="va-bank-picker"
+          style="display:flex; gap:8px; flex-wrap:wrap;"
+        >
           ${
             BANKS.map(b => `
               <button
@@ -1770,40 +1590,51 @@ function paymentDetailHtml(id){
             `).join('')
           }
         </div>
-        <p class="small" style="margin:10px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
+
+        <p
+          class="small"
+          style="margin:10px 0 0;"
+        >
+          Amount:
+          <strong>${fmt(total)}</strong>
         </p>
+
       </div>
+
     `;
 
   }
 
 
-  if(id === 'klarna'){
+  if(id === 'wire-transfer'){
 
     return `
+
       <div class="panel small">
-        <strong>Klarna</strong>
-        ${noteHtml}
-        <p class="small" style="margin:8px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
+
+        <strong>
+          International Bank Wire
+        </strong>
+
+        <p
+          class="small"
+          style="margin:8px 0 0;"
+        >
+          Your order will be created first. Our Client Advisor
+          will provide the official SWIFT payment instructions
+          and beneficiary details.
         </p>
-      </div>
-    `;
 
-  }
-
-
-  if(id === 'alipay-wechatpay'){
-
-    return `
-      <div class="panel small">
-        <strong>Alipay & WeChatPay</strong>
-        ${noteHtml}
-        <p class="small" style="margin:8px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
+        <p
+          class="small"
+          style="margin:8px 0 0;"
+        >
+          Amount:
+          <strong>${fmt(total)}</strong>
         </p>
+
       </div>
+
     `;
 
   }
@@ -1812,13 +1643,31 @@ function paymentDetailHtml(id){
   if(id === 'paypal'){
 
     return `
+
       <div class="panel small">
-        <strong>PayPal</strong>
-        ${noteHtml}
-        <p class="small" style="margin:8px 0 0;">
-          Amount: <strong>${fmt(total)}</strong>
+
+        <strong>
+          PayPal
+        </strong>
+
+        <p
+          class="small"
+          style="margin:8px 0 0;"
+        >
+          Your order will be created first. Payment will then
+          be completed through the official PayPal payment flow.
         </p>
+
+        <p
+          class="small"
+          style="margin:8px 0 0;"
+        >
+          Amount:
+          <strong>${fmt(total)}</strong>
+        </p>
+
       </div>
+
     `;
 
   }
@@ -1827,14 +1676,34 @@ function paymentDetailHtml(id){
   if(id === 'invoice'){
 
     return `
+
       <div class="panel small">
-        <strong>Pay via Invoice</strong>
-        <ol class="pay-steps" style="margin-top:10px;">
-          <li>Review and confirm your order.</li>
-          <li>Continue the conversation on WhatsApp.</li>
-          <li>Your Client Advisor sends secure invoice payment instructions.</li>
+
+        <strong>
+          Pay via Invoice
+        </strong>
+
+        <ol
+          class="pay-steps"
+          style="margin-top:10px;"
+        >
+
+          <li>
+            Place your order.
+          </li>
+
+          <li>
+            A Client Advisor reviews your order.
+          </li>
+
+          <li>
+            You receive secure payment instructions by email.
+          </li>
+
         </ol>
+
       </div>
+
     `;
 
   }
@@ -1946,7 +1815,7 @@ function renderPaymentOptions(){
                     ${
                       p.id === 'card'
                         ? cardBadgesHtml()
-                        : paymentLogoHtml(p.id)
+                        : ''
                     }
 
                   </div>
@@ -2754,7 +2623,8 @@ function buildOrder(){
     ),
 
     customerName:
-      `${document.getElementById('f-first').value.trim()} ${document.getElementById('f-last').value.trim()}`.trim(),
+      `${document.getElementById('f-first').value}
+       ${document.getElementById('f-last').value}`.trim(),
 
     customerEmail:
       document.getElementById('f-email').value.trim(),
@@ -2818,86 +2688,112 @@ function buildOrder(){
 
 
 /* ============================================================
-   ORDER REFERENCE NUMBER
-   ---------------------------------------------------------
-   Generated client-side (no backend order API is used) — just
-   a short, unique-enough reference so the shopper and the
-   CHARMENTIST team can both refer to the same order in chat.
+   SUBMIT ORDER
 ============================================================ */
 
-function generateOrderNumber(){
+async function submitOrder(order){
 
-  const now = new Date();
+  const res =
+    await fetch(
+      `${CHARM_API_BASE}/orders`,
+      {
 
-  const stamp =
-    `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+        method:'POST',
 
-  const rand =
-    Math.random().toString(36).slice(2,6).toUpperCase();
+        headers:{
 
-  return `CHM-${stamp}-${rand}`;
+          'Content-Type':
+            'application/json',
 
-}
+          ...(
+
+            typeof CharmAuth !== 'undefined' &&
+            CharmAuth.getToken &&
+            CharmAuth.getToken()
+
+              ? {
+
+                  Authorization:
+                    `Bearer ${CharmAuth.getToken()}`
+
+                }
+
+              : {}
+
+          )
+
+        },
+
+        body:
+          JSON.stringify(order)
+
+      }
+    );
 
 
-/* ============================================================
-   BUILD WHATSAPP MESSAGE
-   ---------------------------------------------------------
-   Turns the cart, the totals and everything the shopper typed
-   into Step 1–3 into one nicely formatted WhatsApp message —
-   written in the language that matches the country they picked
-   in Step 1 (see LANGUAGE_BY_COUNTRY above). Nothing here is
-   ever sent blank.
-============================================================ */
+  let data = null;
 
-function buildWhatsAppMessage(order, items, totals){
 
-  const t = WA_I18N[currentLanguageCode()] || WA_I18N.en;
+  try{
 
-  const productBaseUrl =
-    window.location.href.replace(/checkout\.html.*$/, '');
+    data =
+      await res.json();
 
-  const lines = [];
+  }catch(error){
 
-  lines.push(t.greeting);
-  lines.push('');
-  lines.push(t.intro);
-  lines.push('');
-  lines.push(`— ${t.items_header} —`);
+    data = null;
 
-  items.forEach((it, idx) => {
+  }
 
-    const p = it.product;
-    const sizeTxt = it.size ? ` | ${t.size}: ${it.size}` : '';
 
-    lines.push(`${idx+1}. ${p.name} — ${p.material}`);
-    lines.push(`   ${t.qty}: ${it.qty}${sizeTxt} | ${fmt(p.price * it.qty)}`);
-    lines.push(`   ${productBaseUrl}product.html?id=${encodeURIComponent(p.id)}`);
+  if(!res.ok){
 
-  });
+    throw new Error(
 
-  lines.push('');
-  lines.push(`— ${t.summary_header} —`);
-  lines.push(`${t.subtotal}: ${fmt(totals.subtotal)}`);
-  lines.push(`${t.shipping}: ${totals.shipping === 0 ? t.complimentary : fmt(totals.shipping)}`);
-  lines.push(`${t.tax}: ${totals.tax === 0 ? '—' : fmt(totals.tax)}`);
-  lines.push(`${t.total}: ${fmt(totals.total)}`);
-  lines.push('');
-  lines.push(`— ${t.delivery_header} —`);
-  lines.push(`${t.delivery_method}: ${selectedDeliveryLabel()}`);
-  lines.push(`${t.payment_method}: ${selectedPaymentLabel()}`);
-  lines.push('');
-  lines.push(`— ${t.shipping_header} —`);
-  lines.push(order.customerName);
-  lines.push(order.customerPhone);
-  lines.push(order.customerEmail);
-  lines.push(order.shippingAddress);
-  lines.push('');
-  lines.push(`${t.order_ref}: ${order.orderNumber}`);
-  lines.push('');
-  lines.push(t.closing);
+      data?.error ||
+      'Could not place order.'
 
-  return lines.join('\n');
+    );
+
+  }
+
+
+  if(
+    !data ||
+    !data.order ||
+    !data.order.orderNumber
+  ){
+
+    throw new Error(
+      'The store server returned an invalid order response.'
+    );
+
+  }
+
+
+  return {
+
+    ok:true,
+
+    orderNumber:
+      data.order.orderNumber,
+
+    snapToken:
+      data.payment?.snapToken || null,
+
+    vaBank:
+      data.payment?.vaBank || null,
+
+    vaNumber:
+      data.payment?.vaNumber || null,
+
+    vaExpiry:
+      data.payment?.vaExpiry || null,
+
+    paymentStatus:
+      data.payment?.status || null
+
+  };
 
 }
 
@@ -2906,7 +2802,7 @@ function buildWhatsAppMessage(order, items, totals){
    SUCCESS
 ============================================================ */
 
-function showOrderSuccess(orderNumber, waUrl){
+function showOrderSuccess(orderNumber, vaInfo){
 
   document
     .getElementById(
@@ -2916,14 +2812,35 @@ function showOrderSuccess(orderNumber, waUrl){
       orderNumber;
 
 
-  const waLink =
+  const vaBox =
     document.getElementById(
-      'checkout-wa-link'
+      'checkout-va-details'
     );
 
-  if(waLink && waUrl){
+  if(vaBox){
 
-    waLink.href = waUrl;
+    if(vaInfo && vaInfo.vaNumber){
+
+      const { total } = getOrderTotals();
+
+      vaBox.style.display = 'block';
+
+      vaBox.innerHTML = `
+        <strong>${(vaInfo.vaBank || '').toUpperCase()} Virtual Account</strong>
+        <p class="small" style="margin:8px 0 0;">
+          Transfer <strong>${fmt(total)}</strong> to VA number
+          <strong>${vaInfo.vaNumber}</strong>${vaInfo.vaExpiry ? ` before <strong>${vaInfo.vaExpiry}</strong>` : ''}.
+          Your order confirms automatically as soon as the transfer is
+          received — no proof of payment needed.
+        </p>
+      `;
+
+    }else{
+
+      vaBox.style.display = 'none';
+      vaBox.innerHTML = '';
+
+    }
 
   }
 
@@ -2954,7 +2871,7 @@ function showOrderSuccess(orderNumber, waUrl){
 
   /*
     Clear cart only after the order has
-    successfully been handed off to WhatsApp.
+    successfully been accepted by backend.
   */
 
   localStorage.removeItem(
@@ -2985,11 +2902,6 @@ function showOrderSuccess(orderNumber, waUrl){
 
 /* ============================================================
    PLACE ORDER
-   ---------------------------------------------------------
-   No payment gateway and no backend order API — Step 3 hands
-   the whole order straight to CHARMENTIST's WhatsApp, as a
-   ready-to-send, nicely formatted message in the shopper's
-   own language.
 ============================================================ */
 
 async function handlePlaceOrder(){
@@ -3011,10 +2923,8 @@ async function handlePlaceOrder(){
 
 
   /*
-    Prices shown to the shopper (and inside the WhatsApp
-    message) depend on a live exchange rate for non-USD
-    currencies — never hand off an order built on a rate
-    we don't actually have.
+    Never allow checkout if FX is unavailable
+    for a non-USD display currency.
   */
 
   if(
@@ -3051,55 +2961,168 @@ async function handlePlaceOrder(){
 
 
   button.textContent =
-    'Opening WhatsApp…';
+    'Placing Order…';
 
 
   try{
 
-    const items =
-      getCartItems();
+    const order =
+      buildOrder();
 
-    if(items.length === 0){
 
-      throw new Error(
-        'Your bag is empty.'
+    const result =
+      await submitOrder(order);
+
+
+    /*
+      Gateway payment
+    */
+
+    if(
+      result.snapToken
+    ){
+
+      if(
+        !window.snap ||
+        typeof window.snap.pay !== 'function'
+      ){
+
+        throw new Error(
+          'Secure payment gateway is not available.'
+        );
+
+      }
+
+
+      window.snap.pay(
+
+        result.snapToken,
+
+        {
+
+          onSuccess: () => {
+
+            showOrderSuccess(
+              result.orderNumber
+            );
+
+          },
+
+
+          onPending: () => {
+
+            /*
+              Pending payment is NOT the same
+              as paid.
+
+              We show the order number so the
+              customer can continue payment,
+              but the backend webhook remains
+              the source of truth.
+            */
+
+            showOrderSuccess(
+              result.orderNumber
+            );
+
+          },
+
+
+          onError: () => {
+
+            alert(
+              `Payment could not be completed.\n\nOrder: ${result.orderNumber}`
+            );
+
+
+            button.disabled =
+              false;
+
+
+            button.textContent =
+              'Place Order →';
+
+          },
+
+
+          onClose: () => {
+
+            button.disabled =
+              false;
+
+
+            button.textContent =
+              'Place Order →';
+
+          }
+
+        }
+
       );
+
+
+      return;
 
     }
 
 
-    const order =
-      buildOrder();
+    /*
+      If this was supposed to be a Midtrans gateway payment
+      (card/qris) but the backend couldn't create a snap token
+      (e.g. the live USD -> IDR rate was unavailable), do NOT
+      show a success screen — the customer hasn't actually paid.
+    */
 
-    order.orderNumber =
-      generateOrderNumber();
+    if(order.paymentMethod === 'card' || order.paymentMethod === 'qris'){
 
-
-    const totals =
-      getOrderTotals();
-
-
-    const message =
-      buildWhatsAppMessage(
-        order,
-        items,
-        totals
+      alert(
+        `We couldn't start the secure payment for this order right now. ` +
+        `Order ${result.orderNumber} was saved, but please try paying again in a moment.`
       );
 
+      button.disabled =
+        false;
 
-    const waUrl =
-      `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(message)}`;
+      button.textContent =
+        'Place Order →';
 
+      return;
 
-    window.open(
-      waUrl,
-      '_blank'
-    );
+    }
 
+    /*
+      Same idea for Bank Transfer: if we couldn't get a Virtual
+      Account number back from Midtrans, don't show a fake success
+      screen with no way to pay — tell the customer to retry.
+    */
+
+    if(order.paymentMethod === 'bank-transfer-domestic' && !result.vaNumber){
+
+      alert(
+        `We couldn't generate a Virtual Account number for this order right now. ` +
+        `Order ${result.orderNumber} was saved, but please try again in a moment.`
+      );
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        'Place Order →';
+
+      return;
+
+    }
+
+    /*
+      Non-gateway / assisted payment.
+
+      Order is created, but we do NOT claim
+      that it has been paid.
+    */
 
     showOrderSuccess(
-      order.orderNumber,
-      waUrl
+      result.orderNumber,
+      result
     );
 
 
@@ -3120,6 +3143,7 @@ async function handlePlaceOrder(){
     button.disabled =
       false;
 
+
     button.textContent =
       'Place Order →';
 
@@ -3131,7 +3155,6 @@ async function handlePlaceOrder(){
 /* ============================================================
    INITIALIZATION
 ============================================================ */
-
 
 document.addEventListener(
   'DOMContentLoaded',
